@@ -30,44 +30,51 @@ define(['jquery'], function ($) {
     this._domID = params.domID;
     this._dimensions = params.dimensions;
     this._isVisible = params.isVisible;
-    this._domElementCache = {
+    this._domCache = {
       palette: null,
       paletteAnchor: null,
       paletteAnchorBorder: null,
-      paletteContainer: null,
       paletteMenuContainer: null,
-      paletteMenu: null
+    };
+    this._sizingCache = {
+      borderRadius: null,
+      anchorHeight: null,
+      anchorBorderHeight: null
     };
     
     this._initializeDOM();
+    this._initializeSizings();
     this._updateDOM();
     this.visible(this._isVisible);
   };
 
 
-  // Altitude of the anchor triangle in pixels.
-  Palette._ANCHOR_ALTITUDE = 10;
-
   // ANCHOR_EDGES enumeration of the edge which can be anchored to 
   Palette.ANCHOR_EDGES = {
-    TOP: 'anchor-edge-top',
-    BOTTOM: 'anchor-edge-bottom',
-    LEFT: 'anchor-edge-left',
-    RIGHT: 'anchor-edge-right'
+    TOP: 'top',
+    BOTTOM: 'bottom',
+    LEFT: 'left',
+    RIGHT: 'right'
   };
 
-  // Padding between the usable area and the boundry of the visible palette in
-  // pixels.
-  Palette._MENU_PADDING = 10;
-
+  // _OPPOSITE_ANCHOR_EDGES map of ANCHOR_EDGES edge to opposite ANCHOR_EDGES
+  // edge.
+  Palette._OPPOSITE_ANCHOR_EDGES = {};
+  Palette._OPPOSITE_ANCHOR_EDGES[Palette.ANCHOR_EDGES.TOP] =
+      Palette.ANCHOR_EDGES.BOTTOM;
+  Palette._OPPOSITE_ANCHOR_EDGES[Palette.ANCHOR_EDGES.LEFT] =
+      Palette.ANCHOR_EDGES.RIGHT;
+  Palette._OPPOSITE_ANCHOR_EDGES[Palette.ANCHOR_EDGES.RIGHT] =
+      Palette.ANCHOR_EDGES.LEFT;
+  Palette._OPPOSITE_ANCHOR_EDGES[Palette.ANCHOR_EDGES.BOTTOM] =
+      Palette.ANCHOR_EDGES.TOP;
 
   // bound updates the range to which the palette is restricted.
   //
   // Arguments:
   //   boundingBox: Optional, an object with 'xmin', 'xmax', 'ymin', and
   //                'ymax' fields. The area in which the palette can
-  //                exist. Must be greater than the dimesions plus
-  //                2 * Palette.USABLE_AREA_PADDING.
+  //                exist. Must be greater than the dimesions of the palette.
   Palette.prototype.bound = function (boundingBox) {
 
   };
@@ -75,53 +82,56 @@ define(['jquery'], function ($) {
 
   // getMenuDiv returns the jQuery object for the palette div that contains all
   // elements in the palette menu.
-  Palette.prototype.getMenuDiv = function () {
-    return this._domElementCache.paletteMenu;
+  Palette.prototype.getMenuContainerElement = function () {
+    return this._domCache.paletteMenuContainer;
   };
 
 
-  // initializeDOM clears any children of the palette div and adds palette
+  // _initializeDOM clears any children of the palette div and adds palette
   // specific DOM children.
   Palette.prototype._initializeDOM = function () {
-    this._domElementCache.palette = $(this._domID);
-    this._domElementCache.palette.empty();
+    this._domCache.palette = $(this._domID);
+    this._domCache.palette.empty();
 
-    this._domElementCache.paletteContainer = $('<div/>', {
-      'class': 'palette-container',
+    this._domCache.paletteAnchor = $('<div/>', {
+      'class': 'palette-anchor-' + this._anchorEdge,
     });
-    this._domElementCache.palette.append(
-        this._domElementCache.paletteContainer);
+    this._domCache.palette.append(
+        this._domCache.paletteAnchor);
 
-    this._domElementCache.paletteAnchor = $('<div/>', {
-      'class': 'palette-anchor',
+    this._domCache.paletteAnchorBorder = $('<div/>', {
+      'class': 'palette-anchor-border-' + this._anchorEdge,
     });
-    this._domElementCache.paletteContainer.append(
-        this._domElementCache.paletteAnchor);
+    this._domCache.palette.append(
+        this._domCache.paletteAnchorBorder);
 
-    this._domElementCache.paletteAnchorBorder = $('<div/>', {
-      'class': 'palette-anchor-border',
-    });
-    this._domElementCache.paletteContainer.append(
-        this._domElementCache.paletteAnchorBorder);
-
-    this._domElementCache.paletteMenuContainer = $('<div/>', {
+    this._domCache.paletteMenuContainer = $('<div/>', {
       'class': 'palette-menu-container',
     });
-    this._domElementCache.paletteContainer.append(
-        this._domElementCache.paletteMenuContainer);
+    this._domCache.palette.append(
+        this._domCache.paletteMenuContainer);
+  };
 
-    this._domElementCache.paletteMenu = $('<div/>', {
-      'class': 'palette-menu',
-    });
-    this._domElementCache.paletteMenuContainer.append(
-        this._domElementCache.paletteMenu);
+
+  // _initializeSizings sets the values for the sizings of palette parameters,
+  // pulled from the css properties set on the elements making up the palette.
+  Palette.prototype._initializeSizings = function () {
+    var borderWidthProperty =
+        'border-' + Palette._OPPOSITE_ANCHOR_EDGES[this._anchorEdge] + '-width';
+
+    this._sizingCache.borderRadius = parseInt(
+        this._domCache.paletteMenuContainer.css('border-radius'), 10);
+    this._sizingCache.anchorHeight = parseInt(
+        this._domCache.paletteAnchor.css(borderWidthProperty), 10);
+    this._sizingCache.anchorBorderHeight = parseInt(
+        this._domCache.paletteAnchorBorder.css(borderWidthProperty), 10);
   };
 
 
   // _updateDOM applies the current palette state to the DOM elements that
   // make up the palette.
   Palette.prototype._updateDOM = function () {
-    
+
   };
 
 
