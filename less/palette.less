@@ -1,0 +1,93 @@
+@palette-anchor-height: 10px;
+@palette-anchor-border-height: (round(sqrt(2) * @palette-border-width) * 2) + @palette-anchor-height;
+@palette-background-color: #BABABA;
+@palette-border-color: #777777;
+@palette-border-radius: 8px;
+@palette-border-width: 2px;
+@palette-menu-container-padding: 10px;
+
+
+.palette {
+  position: absolute;
+  background: @palette-background-color;
+  border-radius: @palette-border-radius;
+}
+
+
+.palette-menu-container {
+  position: absolute;
+  background: @palette-background-color;
+  border-radius: @palette-border-radius;
+  border-width: @palette-border-width;
+  padding: @palette-menu-container-padding;
+}
+
+
+.palette-anchor-left {
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  border-top: @palette-anchor-height solid transparent;
+  border-right: (@palette-anchor-height * 2) solid @palette-background-color;
+  border-bottom: @palette-anchor-height solid transparent;
+}
+
+
+.palette-anchor-border-left {
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  border-top: @palette-anchor-border-height solid transparent;
+  border-right: (@palette-anchor-border-height * 2) solid @palette-border-color;
+  border-bottom: @palette-anchor-border-height solid transparent;
+}
+
+
+.palette-anchor-right {
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  border-top: @palette-anchor-height solid transparent;
+  border-left: (@palette-anchor-height * 2) solid @palette-background-color;
+  border-bottom: @palette-anchor-height solid transparent;
+}
+
+
+.palette-anchor-border-right {
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  border-top: @palette-anchor-border-height solid transparent;
+  border-left: (@palette-anchor-border-height * 2) solid @palette-border-color;
+  border-bottom: @palette-anchor-border-height solid transparent;
+}
+
+
+.palette-anchor-up {
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  border-left: @palette-anchor-height solid transparent;
+  border-right: @palette-anchor-height solid transparent;
+  border-bottom: (@palette-anchor-height * 2) solid @palette-background-color;
+}
+
+
+.palette-anchor-border-up {
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  border-left: @palette-anchor-border-height solid transparent;
+  border-right: @palette-anchor-border-height solid transparent;
+  border-bottom: (@palette-anchor-border-height * 2) solid @palette-border-color;
+}
+
+
+.palette-anchor-down {
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  border-top: (@palette-anchor-border-height * 2) solid @palette-border-color;
+  border-left: @palette-anchor-border-height solid transparent;
+  border-right: @palette-anchor-border-height solid transparent;
+}
