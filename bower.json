@@ -1,0 +1,10 @@
+{
+  "name": "domkit",
+  "description": "A set of reusable DOM based UI components.",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "requirejs": "~2.1.11",
+    "jquery": "~2.0.3"
+  }
+}
