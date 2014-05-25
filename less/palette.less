@@ -1,10 +1,10 @@
 @palette-anchor-height: 10px;
-@palette-background-color: #BABABA;
-@palette-border-color: #777777;
+@palette-background-color: #f7f7f7;
+@palette-border-color: #979797;
 @palette-border-radius: 8px;
 @palette-border-width: 2px;
 @palette-menu-container-padding: @palette-border-radius;
-@palette-anchor-border-height: floor(sqrt(2) * @palette-border-width) + @palette-anchor-height;
+@palette-anchor-border-height: @palette-border-width + @palette-anchor-height;
 
 
 .palette {
@@ -66,7 +66,7 @@
 }
 
 
-.palette-anchor-up {
+.palette-anchor-top {
   width: 0px;
   height: 0px;
   position: absolute;
@@ -76,7 +76,7 @@
 }
 
 
-.palette-anchor-border-up {
+.palette-anchor-border-top {
   width: 0px;
   height: 0px;
   position: absolute;
@@ -86,7 +86,17 @@
 }
 
 
-.palette-anchor-down {
+.palette-anchor-bottom {
+  width: 0px;
+  height: 0px;
+  position: absolute;
+  border-top: (@palette-anchor-height * 2) solid @palette-background-color;
+  border-left: @palette-anchor-height solid transparent;
+  border-right: @palette-anchor-height solid transparent;
+}
+
+
+.palette-anchor-border-bottom {
   width: 0px;
   height: 0px;
   position: absolute;

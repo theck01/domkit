@@ -288,7 +288,7 @@ define(['jquery'], function ($) {
     if (this._anchorEdge === Palette.ANCHOR_EDGES.RIGHT ||
         this._anchorEdge === Palette.ANCHOR_EDGES.BOTTOM) {
       this._paletteOffset[unconstrainedDimension] -=
-          this._sizingCache.paletteDimensions[unconstrainedDimension] -
+          this._sizingCache.paletteDimensions[unconstrainedDimensionProperty] -
           this._sizingCache.borderWidth;
     } else {
       this._paletteOffset[unconstrainedDimension] -=
