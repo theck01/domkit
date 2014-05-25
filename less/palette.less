@@ -5,14 +5,28 @@
 @palette-border-width: 2px;
 @palette-menu-container-padding: @palette-border-radius;
 @palette-anchor-border-height: @palette-border-width + @palette-anchor-height;
+@palette-transition-duration: 0.4s;
+@palette-transition-type: cubic-bezier(0.645, 0.045, 0.355, 1);
+
+
+.palette-transition {
+  transition: width @palette-transition-duration @palette-transition-type,
+              height @palette-transition-duration @palette-transition-type,
+              top @palette-transition-duration @palette-transition-type,
+              left @palette-transition-duration @palette-transition-type,
+              border-width @palette-transition-duration @palette-transition-type,
+              padding @palette-transition-duration @palette-transition-type;
+}
 
 
 .palette {
+  .palette-transition();
   position: absolute;
 }
 
 
 .palette-menu-container {
+  .palette-transition();
   position: absolute;
   background: @palette-background-color;
   border-radius: @palette-border-radius;
@@ -22,11 +36,13 @@
 
 
 .palette-menu {
+  .palette-transition();
   position: absolute;
 };
 
 
 .palette-anchor-left {
+  .palette-transition();
   width: 0px;
   height: 0px;
   position: absolute;
@@ -37,6 +53,7 @@
 
 
 .palette-anchor-border-left {
+  .palette-transition();
   width: 0px;
   height: 0px;
   position: absolute;
@@ -47,6 +64,7 @@
 
 
 .palette-anchor-right {
+  .palette-transition();
   width: 0px;
   height: 0px;
   position: absolute;
@@ -57,6 +75,7 @@
 
 
 .palette-anchor-border-right {
+  .palette-transition();
   width: 0px;
   height: 0px;
   position: absolute;
@@ -67,6 +86,7 @@
 
 
 .palette-anchor-top {
+  .palette-transition();
   width: 0px;
   height: 0px;
   position: absolute;
@@ -77,6 +97,7 @@
 
 
 .palette-anchor-border-top {
+  .palette-transition();
   width: 0px;
   height: 0px;
   position: absolute;
@@ -87,6 +108,7 @@
 
 
 .palette-anchor-bottom {
+  .palette-transition();
   width: 0px;
   height: 0px;
   position: absolute;
@@ -97,6 +119,7 @@
 
 
 .palette-anchor-border-bottom {
+  .palette-transition();
   width: 0px;
   height: 0px;
   position: absolute;

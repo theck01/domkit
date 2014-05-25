@@ -43,6 +43,8 @@ define(['jquery'], function ($) {
     
     this._initializeDOM();
     this._initializeSizings();
+    this._updateAnchorOffsets();
+    this._updatePaletteOffset();
     this._updateDOM();
     this.visible(this._isVisible);
   };
@@ -81,6 +83,33 @@ define(['jquery'], function ($) {
   // elements in the palette menu.
   Palette.prototype.getMenuElement = function () {
     return this._domCache.paletteMenu;
+  };
+
+
+  // _hideDOM collapses palette to the anchor origin point, hiding the contents
+  // from view
+  Palette.prototype._hideDOM = function () {
+    var hiddenPaletteProperties = {
+      'top': this._anchorPosition.y,
+      'left': this._anchorPosition.x,
+      'width': 0,
+      'height': 0
+    };
+
+    var hiddenComponentProperties = {
+      'top': 0,
+      'left': 0,
+      'width': 0,
+      'height': 0,
+      'border-width': 0,
+      'padding': 0
+    };
+
+    this._domCache.palette.css(hiddenPaletteProperties);
+    this._domCache.paletteAnchor.css(hiddenComponentProperties);
+    this._domCache.paletteAnchorBorder.css(hiddenComponentProperties);
+    this._domCache.paletteMenuContainer.css(hiddenComponentProperties);
+    this._domCache.paletteMenu.css(hiddenComponentProperties);
   };
 
 
@@ -201,31 +230,36 @@ define(['jquery'], function ($) {
   // _updateDOM applies the current palette state to the DOM elements that
   // make up the palette.
   Palette.prototype._updateDOM = function () {
-    this._updateAnchorOffsets();
-    this._updatePaletteOffset();
-
     this._domCache.palette.css({
       'top': this._paletteOffset.y,
       'left': this._paletteOffset.x,
       'width': this._sizingCache.paletteDimensions.width,
       'height': this._sizingCache.paletteDimensions.height,
+      'border-width': '',
+      'padding': ''
     });
 
     this._domCache.paletteAnchor.css({
       'top': this._anchorOffset.y - this._paletteOffset.y,
-      'left': this._anchorOffset.x - this._paletteOffset.x
+      'left': this._anchorOffset.x - this._paletteOffset.x,
+      'border-width': '',
+      'padding': ''
     });
 
     this._domCache.paletteAnchorBorder.css({
       'top': this._anchorBorderOffset.y - this._paletteOffset.y,
-      'left': this._anchorBorderOffset.x - this._paletteOffset.x
+      'left': this._anchorBorderOffset.x - this._paletteOffset.x,
+      'border-width': '',
+      'padding': ''
     });
 
     var menuContainerOffset = {
       'top': 0,
       'left': 0,
       'width': this._dimensions.width,
-      'height': this._dimensions.height
+      'height': this._dimensions.height,
+      'border-width': '',
+      'padding': ''
     };
 
     if (this._anchorEdge === Palette.ANCHOR_EDGES.TOP) {
@@ -240,7 +274,9 @@ define(['jquery'], function ($) {
       'top': this._sizingCache.menuContainerPadding,
       'left': this._sizingCache.menuContainerPadding,
       'width': this._dimensions.width,
-      'height': this._dimensions.height
+      'height': this._dimensions.height,
+      'border-width': '',
+      'padding': ''
     });
   };
 
@@ -301,8 +337,16 @@ define(['jquery'], function ($) {
   // to expand or shink the palette from the anchor point.
   //
   // Arguments
-  Palette.prototype.visible = function (isVisible, opt_animationDuration) {
-
+  Palette.prototype.visible = function (isVisible) {
+    if (isVisible) {
+      if (this._isVisible) return;
+      this._updateDOM();
+      this._isVisible = true;
+    } else {
+      if (!this._isVisible) return;
+      this._hideDOM();
+      this._isVisible = false;
+    }
   };
 
 
