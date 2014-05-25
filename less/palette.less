@@ -1,16 +1,14 @@
 @palette-anchor-height: 10px;
-@palette-anchor-border-height: (round(sqrt(2) * @palette-border-width) * 2) + @palette-anchor-height;
 @palette-background-color: #BABABA;
 @palette-border-color: #777777;
 @palette-border-radius: 8px;
 @palette-border-width: 2px;
-@palette-menu-container-padding: 10px;
+@palette-menu-container-padding: @palette-border-radius;
+@palette-anchor-border-height: floor(sqrt(2) * @palette-border-width) + @palette-anchor-height;
 
 
 .palette {
   position: absolute;
-  background: @palette-background-color;
-  border-radius: @palette-border-radius;
 }
 
 
@@ -18,9 +16,14 @@
   position: absolute;
   background: @palette-background-color;
   border-radius: @palette-border-radius;
-  border-width: @palette-border-width;
+  border: @palette-border-width solid @palette-border-color;
   padding: @palette-menu-container-padding;
 }
+
+
+.palette-menu {
+  position: absolute;
+};
 
 
 .palette-anchor-left {
