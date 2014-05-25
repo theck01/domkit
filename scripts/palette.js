@@ -1,6 +1,4 @@
 define(['jquery'], function ($) {
-
-  
   // Palette objects are rectangular menus with rounded corners that are
   // anchored to a location on the page by a triangular point.
   //
@@ -8,15 +6,14 @@ define(['jquery'], function ($) {
   //   params: Object with the following key and value pairs.
   //     domID: CSS DOM ID of the empty div to convert into a palette.
   //     dimensions: An object with 'width' and 'height' fields. The dimensions
-  //         of the area that the palette will occupy.
+  //         of the area that the menu of the palette will occupy.
   //     anchorPosition: An object with 'x' and 'y' fields. The pixel location
   //         where the palette should be anchored.
   //     anchorEdge: One of Palette.ANCHOR_EDGES
   //     isVisible: Whether the palette should be visualized when created.
   //     anchorEdgeBounds: Optional, an object with 'min' and 'max' fields.
   //         The space in which the anchor edge can exist, must be larger than
-  //         the dimensions width or height (dependent upon which edge the
-  //         anchor is attached to).
+  //         that edge of the palette or an error will be thrown.
   var Palette = function (params) {
     this._anchorBorderOffset = { x: 0, y: 0 };
     this._anchorEdge = params.anchorEdge;
@@ -25,9 +22,6 @@ define(['jquery'], function ($) {
     };
     this._anchorOffset = { x: 0, y: 0 };
     this._anchorPosition = params.anchorPosition;
-    this._constrainedDimension =
-        this._anchorEdge === Palette.ANCHOR_EDGES.TOP ||
-        this._anchorEdge === Palette.ANCHOR_EDGES.BOTTOM ? 'x': 'y';
     this._domID = params.domID;
     this._dimensions = params.dimensions;
     this._isVisible = params.isVisible;
@@ -36,17 +30,19 @@ define(['jquery'], function ($) {
       paletteAnchor: null,
       paletteAnchorBorder: null,
       paletteMenuContainer: null,
+      paletteMenu: null
     };
-    this._menuContainerOffset = { x: 0, y: 0 };
+    this._paletteOffset = { x: 0, y: 0 };
     this._sizingCache = {
-      borderRadius: null,
       anchorHeight: null,
-      anchorBorderHeight: null
+      anchorBorderHeight: null,
+      borderWidth: null,
+      menuContainerPadding: null,
+      paletteDimensions: null
     };
     
     this._initializeDOM();
     this._initializeSizings();
-    this._updateMenuContainerOffset();
     this._updateDOM();
     this.visible(this._isVisible);
   };
@@ -72,12 +68,10 @@ define(['jquery'], function ($) {
   Palette._OPPOSITE_ANCHOR_EDGES[Palette.ANCHOR_EDGES.BOTTOM] =
       Palette.ANCHOR_EDGES.TOP;
 
-  // bound updates the range to which the palette is restricted.
+  // bound updates the range to which the palette's anchor edge is restricted.
   //
   // Arguments:
-  //   boundingBox: Optional, an object with 'xmin', 'xmax', 'ymin', and
-  //                'ymax' fields. The area in which the palette can
-  //                exist. Must be greater than the dimesions of the palette.
+  //   boundingRange: Optional, an object with 'min' and 'max'
   Palette.prototype.bound = function (boundingBox) {
 
   };
@@ -85,8 +79,8 @@ define(['jquery'], function ($) {
 
   // getMenuDiv returns the jQuery object for the palette div that contains all
   // elements in the palette menu.
-  Palette.prototype.getMenuContainerElement = function () {
-    return this._domCache.paletteMenuContainer;
+  Palette.prototype.getMenuElement = function () {
+    return this._domCache.paletteMenu;
   };
 
 
@@ -97,23 +91,25 @@ define(['jquery'], function ($) {
     this._domCache.palette.empty();
     this._domCache.palette.addClass('palette');
 
-    this._domCache.paletteAnchor = $('<div/>', {
-      'class': 'palette-anchor-' + this._anchorEdge,
+    this._domCache.paletteMenuContainer = $('<div/>', {
+      'class': 'palette-menu-container',
     });
-    this._domCache.palette.append(
-        this._domCache.paletteAnchor);
+    this._domCache.palette.append(this._domCache.paletteMenuContainer);
+
+    this._domCache.paletteMenu = $('<div/>', {
+      'class': 'palette-menu'
+    });
+    this._domCache.paletteMenuContainer.append(this._domCache.paletteMenu);
 
     this._domCache.paletteAnchorBorder = $('<div/>', {
       'class': 'palette-anchor-border-' + this._anchorEdge,
     });
-    this._domCache.palette.append(
-        this._domCache.paletteAnchorBorder);
+    this._domCache.palette.append(this._domCache.paletteAnchorBorder);
 
-    this._domCache.paletteMenuContainer = $('<div/>', {
-      'class': 'palette-menu-container',
+    this._domCache.paletteAnchor = $('<div/>', {
+      'class': 'palette-anchor-' + this._anchorEdge,
     });
-    this._domCache.palette.append(
-        this._domCache.paletteMenuContainer);
+    this._domCache.palette.append(this._domCache.paletteAnchor);
   };
 
 
@@ -123,19 +119,37 @@ define(['jquery'], function ($) {
     var borderWidthProperty =
         'border-' + Palette._OPPOSITE_ANCHOR_EDGES[this._anchorEdge] + '-width';
 
-    this._sizingCache.borderRadius = parseInt(
-        this._domCache.paletteMenuContainer.css('border-radius'), 10);
     this._sizingCache.anchorHeight = parseInt(
         this._domCache.paletteAnchor.css(borderWidthProperty), 10);
     this._sizingCache.anchorBorderHeight = parseInt(
         this._domCache.paletteAnchorBorder.css(borderWidthProperty), 10);
+    this._sizingCache.borderWidth = parseInt(
+        this._domCache.paletteMenuContainer.css('border-width'), 10);
+    this._sizingCache.menuContainerPadding = parseInt(
+        this._domCache.paletteMenuContainer.css('padding'), 10);
+
+    this._sizingCache.paletteDimensions = {
+      width:
+          this._dimensions.width + 2 * this._sizingCache.menuContainerPadding +
+          2 * this._sizingCache.borderWidth,
+      height:
+          this._dimensions.height + 2 * this._sizingCache.menuContainerPadding +
+          2 * this._sizingCache.borderWidth
+    };
+
+    var anchoredEdgeDimension =
+        this._anchorEdge === Palette.ANCHOR_EDGES.LEFT ||
+        this._anchorEdge === Palette.ANCHOR_EDGES.RIGHT ? 'width' : 'height';
+
+    this._sizingCache.paletteDimensions[anchoredEdgeDimension] +=
+        this._sizingCache.anchorBorderHeight;
   };
 
 
   // _updateAnchorOffsets updates the offset for the palette anchor and palette
   // anchor children.
   Palette.prototype._updateAnchorOffsets = function () {
-    var borderHeight =
+    var heightDiff =
         this._sizingCache.anchorBorderHeight - this._sizingCache.anchorHeight;
     var halfAnchorHeight = Math.floor(this._sizingCache.anchorHeight / 2);
     var halfAnchorBorderHeight =
@@ -144,16 +158,16 @@ define(['jquery'], function ($) {
     switch (this._anchorEdge) {
       case Palette.ANCHOR_EDGES.TOP:
         this._anchorOffset.x = this._anchorPosition.x - halfAnchorHeight;
-        this._anchorOffset.y = this._anchorPosition.y + borderHeight;
+        this._anchorOffset.y = this._anchorPosition.y + heightDiff;
         this._anchorBorderOffset.x =
             this._anchorPosition.x - halfAnchorBorderHeight;
-        this._anchorBorderOffset.y = 0;
+        this._anchorBorderOffset.y = this._anchorPosition.y;
         break;
 
       case Palette.ANCHOR_EDGES.LEFT:
-        this._anchorOffset.x = this._anchorPosition.x + borderHeight;
+        this._anchorOffset.x = this._anchorPosition.x + heightDiff;
         this._anchorOffset.y = this._anchorPosition.y - halfAnchorHeight;
-        this._anchorBorderOffset.x = 0;
+        this._anchorBorderOffset.x = this._anchorPosition.x;
         this._anchorBorderOffset.y = 
             this._anchorPosition.y - halfAnchorBorderHeight;
         break;
@@ -162,7 +176,8 @@ define(['jquery'], function ($) {
         this._anchorOffset.x =
             this._anchorPosition.x - this._sizingCache.anchorBorderHeight;
         this._anchorOffset.y = this._anchorPosition.y - halfAnchorHeight;
-        this._anchorBorderOffset.x = this._anchorOffset.x;
+        this._anchorBorderOffset.x = 
+            this._anchorPosition.x - this._sizingCache.anchorBorderHeight;
         this._anchorBorderOffset.y = 
             this._anchorPosition.y - halfAnchorBorderHeight;
         break;
@@ -173,7 +188,8 @@ define(['jquery'], function ($) {
             this._anchorPosition.y - this._sizingCache.anchorBorderHeight;
         this._anchorBorderOffset.x =
             this._anchorPosition.x - halfAnchorBorderHeight;
-        this._anchorBorderOffset.y = this._anchorOffset.y;
+        this._anchorBorderOffset.y =
+            this._anchorPosition.y - this._sizingCache.anchorBorderHeight;
         break;
 
       default:
@@ -185,57 +201,98 @@ define(['jquery'], function ($) {
   // _updateDOM applies the current palette state to the DOM elements that
   // make up the palette.
   Palette.prototype._updateDOM = function () {
+    this._updateAnchorOffsets();
+    this._updatePaletteOffset();
 
+    this._domCache.palette.css({
+      'top': this._paletteOffset.y,
+      'left': this._paletteOffset.x,
+      'width': this._sizingCache.paletteDimensions.width,
+      'height': this._sizingCache.paletteDimensions.height,
+    });
+
+    this._domCache.paletteAnchor.css({
+      'top': this._anchorOffset.y - this._paletteOffset.y,
+      'left': this._anchorOffset.x - this._paletteOffset.x
+    });
+
+    this._domCache.paletteAnchorBorder.css({
+      'top': this._anchorBorderOffset.y - this._paletteOffset.y,
+      'left': this._anchorBorderOffset.x - this._paletteOffset.x
+    });
+
+    var menuContainerOffset = {
+      'top': 0,
+      'left': 0,
+      'width': this._dimensions.width,
+      'height': this._dimensions.height
+    };
+
+    if (this._anchorEdge === Palette.ANCHOR_EDGES.TOP) {
+        menuContainerOffset.top += this._sizingCache.anchorBorderHeight;
+    } else if (this._anchorEdge === Palette.ANCHOR_EDGES.LEFT) {
+        menuContainerOffset.left += this._sizingCache.anchorBorderHeight;
+    }
+
+    this._domCache.paletteMenuContainer.css(menuContainerOffset);
+
+    this._domCache.paletteMenu.css({
+      'top': this._sizingCache.menuContainerPadding,
+      'left': this._sizingCache.menuContainerPadding,
+      'width': this._dimensions.width,
+      'height': this._dimensions.height
+    });
   };
 
-  // _updateMenuContainerOffset updates the offset for the menu container
+  // _updatePaletteOffset updates the offset for the menu container
   // child of the palette, attempting to keep the container within the
   // constrained edge bounds. Throws an error if constraints cannot be obeyed.
-  Palette.prototype._updateMenuContainerOffset = function () {
+  Palette.prototype._updatePaletteOffset = function () {
+    var constrainedDimension =
+        this._anchorEdge === Palette.ANCHOR_EDGES.TOP ||
+        this._anchorEdge === Palette.ANCHOR_EDGES.BOTTOM ? 'x' : 'y';
     var unconstrainedDimension =
-        this._constrainedDimension === 'x' ? 'y' : 'x';
+        constrainedDimension === 'x' ? 'y' : 'x';
     var constrainedDimensionProperty =
-        this._constrainedDimension === 'x' ? 'width' : 'height';
+        constrainedDimension === 'x' ? 'width' : 'height';
     var unconstrainedDimensionProperty =
-        this._constrainedDimension === 'x' ? 'height' : 'width';
+        constrainedDimension === 'x' ? 'height' : 'width';
 
-    var constraints = {
-      min: this._anchorEdgeBounds.min + this._sizingCache.borderRadius +
-          this._sizingCache.anchorBorderHeight,
-      max: this._anchorEdgeBounds.max - this._sizingCache.borderRadius -
-          this._sizingCache.anchorBorderHeight
-    };
-
+    var paletteDimensions = this._sizingCache.paletteDimensions;
     var constrainedRange = {
-      min: this._anchorPosition[this._constrainedDimension] -
-          Math.floor(this._dimensions[constrainedDimensionProperty] / 2),
-      max: this._anchorPosition[this._constrainedDimension] +
-          Math.ceil(this._dimensions[constrainedDimensionProperty] / 2)
+      min: this._anchorPosition[constrainedDimension] -
+          Math.floor(paletteDimensions[constrainedDimensionProperty] / 2),
+      max: this._anchorPosition[constrainedDimension] +
+          Math.ceil(paletteDimensions[constrainedDimensionProperty] / 2)
     };
 
-    var lowerOffset = constrainedRange.min < constraints.min ?
-        constraints.min - constrainedRange.max : 0;
+    var lowerOffset = constrainedRange.min < this._anchorEdgeBounds.min ?
+        this._anchorEdgeBounds.min - constrainedRange.min : 0;
     constrainedRange.min += lowerOffset;
     constrainedRange.max += lowerOffset;
 
-    var higherOffset = constrainedRange.max > constraints.max ?
-        constraints.max - constrainedRange.min : 0;
+    var higherOffset = constrainedRange.max > this._anchorEdgeBounds.max ?
+        this._anchorEdgeBounds.max - constrainedRange.max : 0;
     constrainedRange.min += higherOffset;
     constrainedRange.max += higherOffset;
 
-    if (constrainedRange.min < constraints.min ||
-        constrainedRange.max > constraints.max) {
+    if (constrainedRange.min < this._anchorEdgeBounds.min ||
+        constrainedRange.max > this._anchorEdgeBounds.max) {
       throw Error('Cannot find location for palette in constrained dimension.');
     }
 
-    this._menuContainerOffset[this._constrainedDimension] =
-        constrainedRange.min;
-    this._menuContainerOffset[unconstrainedDimension] =
+    this._paletteOffset[constrainedDimension] = constrainedRange.min;
+    this._paletteOffset[unconstrainedDimension] =
         this._anchorPosition[unconstrainedDimension];
 
-    if (this._anchorEdge === Palette.ANCHOR_EDGES.LEFT ||
-        this._anchorEdge === Palette.ANCHOR_EDGES.TOP) {
-      this._menuContainerOffset += this._sizingCache.anchorBorderHeight;
+    if (this._anchorEdge === Palette.ANCHOR_EDGES.RIGHT ||
+        this._anchorEdge === Palette.ANCHOR_EDGES.BOTTOM) {
+      this._paletteOffset[unconstrainedDimension] -=
+          this._sizingCache.paletteDimensions[unconstrainedDimension] -
+          this._sizingCache.borderWidth;
+    } else {
+      this._paletteOffset[unconstrainedDimension] -=
+          this._sizingCache.borderWidth;
     }
   };
 
