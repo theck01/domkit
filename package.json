@@ -1,0 +1,9 @@
+{
+  "name": "domkit",
+  "description": "A set of reusable DOM based UI components.",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "less": "~1.4.2"
+  }
+}
