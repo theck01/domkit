@@ -1,5 +1,6 @@
 # css task variables
 LESSC = node_modules/.bin/lessc
+LESS_FLAGS = -x
 LESS_DIR = less
 CSS_DIR = css
 LESS_FILES = $(wildcard $(LESS_DIR)/*.less)
@@ -20,5 +21,5 @@ install:
 
 less: $(CSS_FILES)
 
-$(CSS_DIR)/%.css: $(LESS_DIR)/%.less
-	$(LESSC) $< > $@
+$(CSS_DIR)/%.css: $(LESS_DIR)/%.less $(LESS_FILES)
+	$(LESSC) $(LESS_FLAGS) $< > $@
