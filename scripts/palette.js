@@ -118,25 +118,25 @@ define(['jquery'], function ($) {
   Palette.prototype._initializeDOM = function () {
     this._domCache.palette = $(this._domID);
     this._domCache.palette.empty();
-    this._domCache.palette.addClass('palette');
+    this._domCache.palette.addClass('dk-palette');
 
     this._domCache.paletteMenuContainer = $('<div/>', {
-      'class': 'palette-menu-container',
+      'class': 'dk-palette-menu-container',
     });
     this._domCache.palette.append(this._domCache.paletteMenuContainer);
 
     this._domCache.paletteMenu = $('<div/>', {
-      'class': 'palette-menu'
+      'class': 'dk-palette-menu'
     });
     this._domCache.paletteMenuContainer.append(this._domCache.paletteMenu);
 
     this._domCache.paletteAnchorBorder = $('<div/>', {
-      'class': 'palette-anchor-border-' + this._anchorEdge,
+      'class': 'dk-palette-anchor-border-' + this._anchorEdge,
     });
     this._domCache.palette.append(this._domCache.paletteAnchorBorder);
 
     this._domCache.paletteAnchor = $('<div/>', {
-      'class': 'palette-anchor-' + this._anchorEdge,
+      'class': 'dk-palette-anchor-' + this._anchorEdge,
     });
     this._domCache.palette.append(this._domCache.paletteAnchor);
   };
