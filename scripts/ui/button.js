@@ -60,6 +60,12 @@ define(['jquery'], function ($) {
   };
 
 
+  // getToggleState returns whether the button is active or not.
+  Button.prototype.getToggleState = function () {
+    return this._toggleable && this._toggled;
+  };
+
+
   // mousedown handler
   Button.prototype._handlePress = function () {
     if (this._toggleable) {
@@ -131,6 +137,13 @@ define(['jquery'], function ($) {
     return this._$element.hasClass('dk-button') ||
       this._$element.hasClass('dk-toggleable-button') ||
       this._$element.hasClass('dk-toggleable-button-active');
+  };
+
+
+  // isToggleable returns whether the button is a toggleable button or a
+  // standard button.
+  Button.prototype.isToggleable = function () {
+    return this._toggleable;
   };
 
 
