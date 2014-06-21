@@ -43,6 +43,13 @@ define(['jquery'], function ($) {
   };
 
 
+  // click initiates the handling of a UI click on the button.
+  Button.prototype.click = function () {
+    this._handlePress();
+    this._handleRelease();
+  };
+
+
   // destroy removes all callback handlers from the element
   Button.prototype.destroy = function () {
     this._$element.unbind('mousedown', this._handlers.mousePress);
@@ -136,6 +143,14 @@ define(['jquery'], function ($) {
     var handlerIndex = this._onClickHandlers.indexOf(handler);
     if (handlerIndex === -1) return;
     this._onClickHandlers.splice(handlerIndex, 1);
+  };
+
+
+  // setToggleState updates the button's toggle state to the desired boolean.
+  // Arguments:
+  //     toggled: Boolean, whether the button will be toggled or not.
+  Button.prototype.setToggleState = function (toggled) {
+    if (this._toggleable && this._toggled != toggled) this.click();
   };
 
 
