@@ -5,7 +5,7 @@ require.config({
 });
 
 
-require(['jquery', 'palette', 'button'], function($, Palette, Button) {
+require(['jquery', 'ui/palette', 'ui/button'], function($, Palette, Button) {
 	$(function () {
 		window.testPalette = new Palette({
 			domID: '#test-palette',
