@@ -121,9 +121,9 @@ define(['jquery'], function ($) {
   // _isDKButton verifies that the element the Button instance is bound to
   // has a dk-button or related CSS class.
   Button.prototype._isDKButton = function () {
-    return this._$element.hasClass('.dk-button') ||
-      this._$element.hasClass('.dk-toggleable-button') ||
-      this._$element.hasClass('.dk-toggleable-button-active');
+    return this._$element.hasClass('dk-button') ||
+      this._$element.hasClass('dk-toggleable-button') ||
+      this._$element.hasClass('dk-toggleable-button-active');
   };
 
 
