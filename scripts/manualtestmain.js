@@ -5,7 +5,7 @@ require.config({
 });
 
 
-require(['jquery', 'palette', 'button'], function($, Palette, Buttons) {
+require(['jquery', 'palette', 'button'], function($, Palette, Button) {
 	$(function () {
 		window.testPalette = new Palette({
 			domID: '#test-palette',
@@ -15,6 +15,19 @@ require(['jquery', 'palette', 'button'], function($, Palette, Buttons) {
 			isVisible: true,
 			anchorEdgeBounds: { min: 260, max: Infinity }
 		});
+
+    window.Button = Button;
+
+    var regularButton = Button.create('#test-button');
+    regularButton.addClickHandler(function () {
+      console.log('Clicked.');
+    });
+
+    var toggleButton = Button.create('#test-toggle');
+    toggleButton.addClickHandler(function (toggleState) {
+      if (toggleState) console.log('Toggle active.');
+      else console.log('Toggle disabled.');
+    });
 
     $('.dk-button').width(100).height(50);
     $('.dk-toggleable-button').width(100).height(50);

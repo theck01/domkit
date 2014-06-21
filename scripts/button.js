@@ -1,50 +1,71 @@
 define(['jquery'], function ($) {
-  // ButtonInstance extends the HTML button element, giving default behaviors.
+
+  var _DATA_FIELD_KEY = '_data_dk_button_object';
+
+
+  // Button extends the HTML button element, giving default behaviors.
   // Arguments:
-  //   $domElement: A single jQuery dom element.
-  //   toggleable: Boolean, whether the element should become active when
-  //       clicked.
-  //   opt_isToggled: Boolean, whether the element is toggled or not. By
-  //       default buttons are not toggled
-  //
-  var ButtonInstance = function ($domElement, toggleable, opt_isToggled) {
-    this._element = $domElement;
-    this._toggleable = toggleable;
-    this._toggled = !!opt_isToggled;
+  //   domID: A CSS style id selector.
+  var Button = function (domID) {
+    this._$element = $(domID);
+    this._toggleable = this._$element.hasClass('dk-toggleable-button') ||
+        this._$element.hasClass('dk-toggleable-button-active');
+    this._toggled = this._toggleable &&
+        this._$element.hasClass('dk-toggleable-button-active');
     this._handlers = Object.create(null);
     this._mouseDown = false;
+    this._onClickHandlers = [];
 
     this._handlers.mousePress = this._handlePress.bind(this);
     this._handlers.mouseRelease = this._handleRelease.bind(this);
     this._handlers.mouseLeave = this._handleLeave.bind(this);
 
-    this._element.bind('mousedown', this._handlers.mousePress);
-    this._element.bind('mouseup', this._handlers.mouseRelease);
-    this._element.bind('mouseleave', this._handlers.mouseLeave);
+    this._$element.bind('mousedown', this._handlers.mousePress);
+    this._$element.bind('mouseup', this._handlers.mouseRelease);
+    this._$element.bind('mouseleave', this._handlers.mouseLeave);
+
+    this._$element.data(_DATA_FIELD_KEY, this);
+
+    if (!this._isDKButton()) {
+      this._$element.addClass('dk-button');
+    }
+  };
+
+
+  // addClickHandler registers a function to handle click events on the button.
+  // Arguments:
+  //   handler: Function that takes a boolean argument, whether the button is
+  //       active (toggled) or not.
+  Button.prototype.addClickHandler = function (handler) {
+    if (this._onClickHandlers.indexOf(handler) === -1) {
+      this._onClickHandlers.push(handler);
+    }
   };
 
 
   // destroy removes all callback handlers from the element
-  ButtonInstance.prototype.destroy = function () {
-    this._element.unbind('mousedown', this._handlers.mousePress);
-    this._element.unbind('mouseup', this._handlers.mouseRelease);
-    this._element.unbind('mouseleave', this._handlers.mouseLeave);
+  Button.prototype.destroy = function () {
+    this._$element.unbind('mousedown', this._handlers.mousePress);
+    this._$element.unbind('mouseup', this._handlers.mouseRelease);
+    this._$element.unbind('mouseleave', this._handlers.mouseLeave);
+
+    this._$element.data(_DATA_FIELD_KEY, null);
   };
 
 
   // mousedown handler
-  ButtonInstance.prototype._handlePress = function () {
+  Button.prototype._handlePress = function () {
     if (this._toggleable) {
       if (this._toggled) {
-        this._element.addClass('dk-toggleable-button-active-pressed');
-        this._element.removeClass('dk-toggleable-button-active');
+        this._$element.addClass('dk-toggleable-button-active-pressed');
+        this._$element.removeClass('dk-toggleable-button-active');
       } else {
-        this._element.addClass('dk-toggleable-button-pressed');
-        this._element.removeClass('dk-toggleable-button');
+        this._$element.addClass('dk-toggleable-button-pressed');
+        this._$element.removeClass('dk-toggleable-button');
       }
     } else {
-      this._element.addClass('dk-button-pressed');
-      this._element.removeClass('dk-button');
+      this._$element.addClass('dk-button-pressed');
+      this._$element.removeClass('dk-button');
     }
 
     this._mouseDown = true;
@@ -52,40 +73,44 @@ define(['jquery'], function ($) {
 
 
   // mouseup handler
-  ButtonInstance.prototype._handleRelease = function () {
+  Button.prototype._handleRelease = function () {
     if (this._toggleable) {
       this._toggled = !this._toggled;
 
       if (this._toggled) {
-        this._element.addClass('dk-toggleable-button-active');
-        this._element.removeClass('dk-toggleable-button-pressed');
+        this._$element.addClass('dk-toggleable-button-active');
+        this._$element.removeClass('dk-toggleable-button-pressed');
       } else {
-        this._element.addClass('dk-toggleable-button');
-        this._element.removeClass('dk-toggleable-button-active-pressed');
+        this._$element.addClass('dk-toggleable-button');
+        this._$element.removeClass('dk-toggleable-button-active-pressed');
       }
     } else {
-      this._element.addClass('dk-button');
-      this._element.removeClass('dk-button-pressed');
+      this._$element.addClass('dk-button');
+      this._$element.removeClass('dk-button-pressed');
     }
 
     this._mouseDown = false;
+
+    for (var i = 0; i < this._onClickHandlers.length; i++) {
+      this._onClickHandlers[i](this._toggled);
+    }
   };
 
 
   // mouseleave handler
-  ButtonInstance.prototype._handleLeave = function () {
+  Button.prototype._handleLeave = function () {
     if (this._mouseDown) {
       if (this._toggleable) {
         if (this._toggled) {
-          this._element.addClass('dk-toggleable-button-active');
-          this._element.removeClass('dk-toggleable-button-active-pressed');
+          this._$element.addClass('dk-toggleable-button-active');
+          this._$element.removeClass('dk-toggleable-button-active-pressed');
         } else {
-          this._element.addClass('dk-toggleable-button');
-          this._element.removeClass('dk-toggleable-button-pressed');
+          this._$element.addClass('dk-toggleable-button');
+          this._$element.removeClass('dk-toggleable-button-pressed');
         }
       } else {
-        this._element.addClass('dk-button');
-        this._element.removeClass('dk-button-pressed');
+        this._$element.addClass('dk-button');
+        this._$element.removeClass('dk-button-pressed');
       }
     }
 
@@ -93,44 +118,38 @@ define(['jquery'], function ($) {
   };
 
 
-  // List of all active ButtonInstances
-  var instances = [];
-
-  // Buttons singleton, which sole purpose is to add functionallity to buttons
-  // with the .dk-button (or related) class.
-  var Buttons = Object.create(null);
-
-
-  // Refresh behavior on any buttons currently present in the DOM. SHOULD NOT
-  // BE CALLED WHEN CLICKING A .dk-button OR RELATED.
-  Buttons.refresh = function () {
-    // Destroy all existing button instances.
-    for (var i = 0; i < instances.length; i++) {
-      instances[i].destroy();
-    }
-
-    instances = [];
-
-    // Instantiate new button instances for each .dk-button in the dom.
-    $('.dk-button').each(function (i, element) {
-      instances.push(new ButtonInstance($(element), false));
-    });
-
-    // Instantiate new button instances for each .dk-toggleable-button in the
-    // dom.
-    $('.dk-toggleable-button').each(function (i, element) {
-      instances.push(new ButtonInstance($(element), true));
-    });
-
-    // Instantiate new button instances for each .dk-toggleable-button-active
-    // in the dom.
-    $('.dk-toggleable-button-active').each(function (i, element) {
-      instances.push(new ButtonInstance($(element), true, true));
-    });
+  // _isDKButton verifies that the element the Button instance is bound to
+  // has a dk-button or related CSS class.
+  Button.prototype._isDKButton = function () {
+    return this._$element.hasClass('.dk-button') ||
+      this._$element.hasClass('.dk-toggleable-button') ||
+      this._$element.hasClass('.dk-toggleable-button-active');
   };
 
-  // Automatically update buttons on load of script.
-  Buttons.refresh();
 
-  return Buttons;
+  // removeClickHandler unregisters a function that handles click events on the
+  // button.
+  // Arguments:
+  //   handler: Function that takes a boolean argument, whether the button is
+  //       active (toggled) or not.
+  Button.prototype.removeClickHandler = function (handler) {
+    var handlerIndex = this._onClickHandlers.indexOf(handler);
+    if (handlerIndex === -1) return;
+    this._onClickHandlers.splice(handlerIndex, 1);
+  };
+
+
+  // create returns a Button instance for the given domID. If the instance
+  // already exists then the instance is returned, if not then a new instance
+  // is returned.
+  // Arguments:
+  //   domID: A CSS style id selector.
+  Button.create = function (domID) {
+    var $element = $(domID);
+    var buttonInstance = $element.data(_DATA_FIELD_KEY);
+    return buttonInstance ? buttonInstance : new Button(domID);
+  };
+
+  
+  return Button;
 });
