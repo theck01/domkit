@@ -1,30 +1,27 @@
 define(['jquery'], function ($) {
   // Palette objects are rectangular menus with rounded corners that are
   // anchored to a location on the page by a triangular point.
-  //
   // Arguments:
   //   params: Object with the following key and value pairs.
-  //     domID: CSS DOM ID of the empty div to convert into a palette.
+  //     domID: CSS DOM ID of the DOM element to which the palette is attached.
+  //     anchorEdge: The edge of the element to which the palette is anchored.
+  //         One of Palette.ANCHOR_EDGES.
   //     dimensions: An object with 'width' and 'height' fields. The dimensions
   //         of the area that the menu of the palette will occupy.
-  //     anchorPosition: An object with 'x' and 'y' fields. The pixel location
-  //         where the palette should be anchored.
-  //     anchorEdge: One of Palette.ANCHOR_EDGES
-  //     isVisible: Whether the palette should be visualized when created.
+  //     isVisible: Optional, whether the palette should be shown when created.
+  //         Defaults to false.
   //     anchorEdgeBounds: Optional, an object with 'min' and 'max' fields.
   //         The space in which the anchor edge can exist, must be larger than
   //         that edge of the palette or an error will be thrown.
   var Palette = function (params) {
     this._anchorBorderOffset = { x: 0, y: 0 };
-    this._anchorEdge = params.anchorEdge;
+    this._anchorEdge = _OPPOSITE_ANCHOR_EDGES[params.anchorEdge];
     this._anchorEdgeBounds = params.anchorEdgeBounds || {
       min: -Infinity, max: Infinity
     };
     this._anchorOffset = { x: 0, y: 0 };
-    this._anchorPosition = params.anchorPosition;
-    this._domID = params.domID;
     this._dimensions = params.dimensions;
-    this._isVisible = params.isVisible;
+    this._isVisible = !!params.isVisible;
     this._domCache = {
       palette: null,
       paletteAnchor: null,
@@ -33,6 +30,8 @@ define(['jquery'], function ($) {
       paletteMenu: null
     };
     this._paletteOffset = { x: 0, y: 0 };
+    this._siblingDomID = params.domID;
+    this._$sibling = $(this._siblingDomID);
     this._sizingCache = {
       anchorHeight: null,
       anchorBorderHeight: null,
@@ -40,13 +39,14 @@ define(['jquery'], function ($) {
       menuContainerPadding: null,
       paletteDimensions: null
     };
+    this._anchorPosition = this._calculateAnchorPosistion();
     
     this._initializeDOM();
     this._initializeSizings();
     this._updateAnchorOffsets();
     this._updatePaletteOffset();
-    this._updateDOM();
-    this.visible(this._isVisible);
+    if (this._isVisible) this._updateDOM();
+    else this._hideDOM();
   };
 
 
@@ -60,22 +60,64 @@ define(['jquery'], function ($) {
 
   // _OPPOSITE_ANCHOR_EDGES map of ANCHOR_EDGES edge to opposite ANCHOR_EDGES
   // edge.
-  Palette._OPPOSITE_ANCHOR_EDGES = {};
-  Palette._OPPOSITE_ANCHOR_EDGES[Palette.ANCHOR_EDGES.TOP] =
+  var _OPPOSITE_ANCHOR_EDGES = {};
+  _OPPOSITE_ANCHOR_EDGES[Palette.ANCHOR_EDGES.TOP] =
       Palette.ANCHOR_EDGES.BOTTOM;
-  Palette._OPPOSITE_ANCHOR_EDGES[Palette.ANCHOR_EDGES.LEFT] =
+  _OPPOSITE_ANCHOR_EDGES[Palette.ANCHOR_EDGES.LEFT] =
       Palette.ANCHOR_EDGES.RIGHT;
-  Palette._OPPOSITE_ANCHOR_EDGES[Palette.ANCHOR_EDGES.RIGHT] =
+  _OPPOSITE_ANCHOR_EDGES[Palette.ANCHOR_EDGES.RIGHT] =
       Palette.ANCHOR_EDGES.LEFT;
-  Palette._OPPOSITE_ANCHOR_EDGES[Palette.ANCHOR_EDGES.BOTTOM] =
+  _OPPOSITE_ANCHOR_EDGES[Palette.ANCHOR_EDGES.BOTTOM] =
       Palette.ANCHOR_EDGES.TOP;
 
+  // Number of pixels to offset the anchor point from the anchored elements
+  // edge.
+  var _EDGE_OFFSET = 1;
+
+
   // bound updates the range to which the palette's anchor edge is restricted.
-  //
   // Arguments:
   //   boundingRange: Optional, an object with 'min' and 'max'
-  Palette.prototype.bound = function (boundingBox) {
+  Palette.prototype.bound = function (boundingRange) {
+    this._anchorEdgeBounds = boundingRange;
+  };
 
+
+  // _calculateAnchorPosition calculates the anchor position of the palette so
+  // that the palette is attached to the appropriate edge of the sibling
+  // element.
+  Palette.prototype._calculateAnchorPosistion = function () {
+    var siblingPosition = this._$sibling.position();
+    var position = { x: siblingPosition.left, y: siblingPosition.top };
+
+    switch (this._anchorEdge) {
+      case Palette.ANCHOR_EDGES.TOP:
+        position.x += Math.floor(this._$sibling.outerWidth() / 2);
+        position.y += this._$sibling.outerHeight() + _EDGE_OFFSET;
+        break;
+
+      case Palette.ANCHOR_EDGES.LEFT:
+        position.x += this._$sibling.outerWidth() + _EDGE_OFFSET;
+        position.y += Math.floor(this._$sibling.outerHeight() / 2);
+        break;
+
+      case Palette.ANCHOR_EDGES.RIGHT:
+        position.x -= _EDGE_OFFSET;
+        position.y += Math.floor(this._$sibling.outerHeight() / 2);
+        break;
+
+      case Palette.ANCHOR_EDGES.BOTTOM:
+        position.x += Math.floor(this._$sibling.outerWidth() / 2);
+        position.y -= _EDGE_OFFSET;
+        break;
+
+      default:
+        throw Error(
+            'Cannot calculate anchor position when bound to nonstandard ' +
+            'edge ' + this._anchorEdge);
+    }
+
+    return position;
   };
 
 
@@ -116,9 +158,13 @@ define(['jquery'], function ($) {
   // _initializeDOM clears any children of the palette div and adds palette
   // specific DOM children.
   Palette.prototype._initializeDOM = function () {
-    this._domCache.palette = $(this._domID);
-    this._domCache.palette.empty();
-    this._domCache.palette.addClass('dk-palette');
+    var $parentElement = this._$sibling.parent();
+
+    this._domCache.palette = $('<div/>', {
+      'class': 'dk-palette'
+    });
+    if (!this._isVisible) this._domCache.palette.hide();
+    $parentElement.append(this._domCache.palette);
 
     this._domCache.paletteMenuContainer = $('<div/>', {
       'class': 'dk-palette-menu-container',
@@ -146,7 +192,7 @@ define(['jquery'], function ($) {
   // pulled from the css properties set on the elements making up the palette.
   Palette.prototype._initializeSizings = function () {
     var borderWidthProperty =
-        'border-' + Palette._OPPOSITE_ANCHOR_EDGES[this._anchorEdge] + '-width';
+        'border-' + _OPPOSITE_ANCHOR_EDGES[this._anchorEdge] + '-width';
 
     this._sizingCache.anchorHeight = parseInt(
         this._domCache.paletteAnchor.css(borderWidthProperty), 10);
@@ -338,6 +384,7 @@ define(['jquery'], function ($) {
   //
   // Arguments
   Palette.prototype.visible = function (isVisible) {
+    this._domCache.palette.show();
     if (isVisible) {
       if (this._isVisible) return;
       this._updateDOM();

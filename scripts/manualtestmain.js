@@ -7,16 +7,7 @@ require.config({
 
 require(['jquery', 'ui/palette', 'ui/button'], function($, Palette, Button) {
 	$(function () {
-		window.testPalette = new Palette({
-			domID: '#test-palette',
-			dimensions: { width: 200, height: 100 },
-			anchorPosition: { x: 300, y: 300 },
-			anchorEdge: Palette.ANCHOR_EDGES.LEFT,
-			isVisible: true,
-			anchorEdgeBounds: { min: 260, max: Infinity }
-		});
-
-    window.Button = Button;
+    var testPalette = null;
 
     var regularButton = Button.create('#test-button');
     regularButton.addClickHandler(function () {
@@ -27,9 +18,18 @@ require(['jquery', 'ui/palette', 'ui/button'], function($, Palette, Button) {
     toggleButton.addClickHandler(function (toggleState) {
       if (toggleState) console.log('Toggle active.');
       else console.log('Toggle disabled.');
+      testPalette.visible(toggleState);
     });
 
     $('.dk-button').width(100).height(50);
     $('.dk-toggleable-button').width(100).height(50);
+
+		testPalette = new Palette({
+			domID: '#test-toggle',
+			dimensions: { width: 200, height: 100 },
+			anchorEdge: Palette.ANCHOR_EDGES.BOTTOM,
+			isVisible: false,
+			anchorEdgeBounds: { min: 0, max: Infinity }
+		});
 	});
 });
