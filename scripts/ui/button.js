@@ -43,6 +43,10 @@ define(['jquery'], function ($) {
   };
 
 
+  // addStateHandler is an alias for addClickHandler
+  Button.prototype.addStateHandler = Button.prototype.addClickHandler;
+
+
   // click initiates the handling of a UI click on the button.
   Button.prototype.click = function () {
     this._handlePress();
@@ -60,13 +64,13 @@ define(['jquery'], function ($) {
   };
 
 
-  // getToggleState returns whether the button is active or not.
-  Button.prototype.getToggleState = function () {
+  // getState returns whether the button is active or not.
+  Button.prototype.getState = function () {
     return this._toggleable && this._toggled;
   };
 
 
-  // mousedown handler
+  // _handlePress mousedown handler
   Button.prototype._handlePress = function () {
     if (this._toggleable) {
       if (this._toggled) {
@@ -85,7 +89,7 @@ define(['jquery'], function ($) {
   };
 
 
-  // mouseup handler
+  // _handleRelease mouseup handler
   Button.prototype._handleRelease = function () {
     if (this._toggleable) {
       this._toggled = !this._toggled;
@@ -110,7 +114,7 @@ define(['jquery'], function ($) {
   };
 
 
-  // mouseleave handler
+  // _handleLeave mouseleave handler
   Button.prototype._handleLeave = function () {
     if (this._mouseDown) {
       if (this._toggleable) {
@@ -159,10 +163,14 @@ define(['jquery'], function ($) {
   };
 
 
-  // setToggleState updates the button's toggle state to the desired boolean.
+  // removeStateHandler is an alias for removeClickHandler
+  Button.prototype.removeStateHandler = Button.prototype.removeClickHandler;
+
+
+  // setState updates the button's toggle state to the desired boolean.
   // Arguments:
   //     toggled: Boolean, whether the button will be toggled or not.
-  Button.prototype.setToggleState = function (toggled) {
+  Button.prototype.setState = function (toggled) {
     if (this._toggleable && this._toggled != toggled) this.click();
   };
 
