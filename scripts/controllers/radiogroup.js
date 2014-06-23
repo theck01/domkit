@@ -7,8 +7,7 @@ define([], function () {
   //   opt_activeIndex: The index of the element within the elements array that
   //       should start as toggled.
   var RadioGroup = function (elements, opt_activeIndex) {
-    this._activeElement = opt_activeIndex === undefined ?
-        null : elements[opt_activeIndex];
+    this._activeIndex = opt_activeIndex === undefined ? -1 : opt_activeIndex;
     this._toggleableElements = [];
     this._toggleHandlers = this._generateHandlers(elements.length);
 
@@ -54,7 +53,7 @@ define([], function () {
 
     this._toggleHandlers = [];
     this._toggeableElements = [];
-    this._activeElement = null;
+    this._activeIndex = -1;
   };
 
 
@@ -81,8 +80,9 @@ define([], function () {
 
   // getActiveElement returns the element currently active within the radio
   // group, or null if no element is active.
-  RadioGroup.prototype._getActiveElement = function () {
-    return this._activeElement;
+  RadioGroup.prototype.getActiveElement = function () {
+    if (this._activeIndex === -1) return null;
+    return this._toggleableElements[this._activeIndex];
   };
 
 
@@ -91,13 +91,16 @@ define([], function () {
   //   elementIndex: The index of the element that changed state.
   //   state: The state of the element after the change.
   RadioGroup.prototype._handleStateChange = function (elementIndex, state) {
-    if (!state) return;
+    if (this._activeIndex === elementIndex) {
+      if (!state) this._activeIndex = -1;
+      return;
+    }
 
-    this._activeElement = this._toggleableElements[elementIndex];
-
-    for (var i = 0; i < this._toggleableElements.length; i++) {
-      if (i === elementIndex) continue;
-      this._toggleableElements[i].setState(false);
+    if (state) {
+      if (this._activeIndex >= 0) {
+        this._toggleableElements[this._activeIndex].setState(false);
+      }
+      this._activeIndex = elementIndex;
     }
   };
   
