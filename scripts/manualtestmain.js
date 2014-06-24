@@ -42,21 +42,21 @@ require(['jquery', 'controllers/radiogroup', 'ui/palette', 'ui/button'],
 
 		testPalettes[0] = new Palette({
 			domID: '#test-radio-0',
-			dimensions: { width: 200, height: 100 },
+			menuElements: $('<div/>', { 'class': 'placeholder' }),
 			anchorEdge: Palette.ANCHOR_EDGES.BOTTOM,
 			isVisible: false,
 			anchorEdgeBounds: { min: 0, max: Infinity }
 		});
 		testPalettes[1] = new Palette({
 			domID: '#test-radio-1',
-			dimensions: { width: 200, height: 100 },
+			menuElements: $('<div/>', { 'class': 'placeholder' }),
 			anchorEdge: Palette.ANCHOR_EDGES.BOTTOM,
 			isVisible: false,
 			anchorEdgeBounds: { min: 0, max: Infinity }
 		});
 		testPalettes[2] = new Palette({
 			domID: '#test-radio-2',
-			dimensions: { width: 200, height: 100 },
+			menuElements: $('<div/>', { 'class': 'placeholder' }),
 			anchorEdge: Palette.ANCHOR_EDGES.BOTTOM,
 			isVisible: false,
 			anchorEdgeBounds: { min: 0, max: Infinity }

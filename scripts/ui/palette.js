@@ -6,8 +6,10 @@ define(['jquery'], function ($) {
   //     domID: CSS DOM ID of the DOM element to which the palette is attached.
   //     anchorEdge: The edge of the element to which the palette is anchored.
   //         One of Palette.ANCHOR_EDGES.
-  //     dimensions: An object with 'width' and 'height' fields. The dimensions
-  //         of the area that the menu of the palette will occupy.
+  //     menuElements: A jQuery object root of a DOM based menu that the
+  //         palette will contain. This DOM tree must be sized completely
+  //         class based rules, per element rules will be overwritten by the
+  //         palette.
   //     isVisible: Optional, whether the palette should be shown when created.
   //         Defaults to false.
   //     anchorEdgeBounds: Optional, an object with 'min' and 'max' fields.
@@ -20,7 +22,6 @@ define(['jquery'], function ($) {
       min: -Infinity, max: Infinity
     };
     this._anchorOffset = { x: 0, y: 0 };
-    this._dimensions = params.dimensions;
     this._isVisible = !!params.isVisible;
     this._domCache = {
       palette: null,
@@ -29,6 +30,7 @@ define(['jquery'], function ($) {
       paletteMenuContainer: null,
       paletteMenu: null
     };
+    this._$menu = params.menuElements;
     this._paletteOffset = { x: 0, y: 0 };
     this._siblingDomID = params.domID;
     this._$sibling = $(this._siblingDomID);
@@ -40,8 +42,16 @@ define(['jquery'], function ($) {
       paletteDimensions: null
     };
     this._anchorPosition = this._calculateAnchorPosistion();
-    
+
     this._initializeDOM();
+
+    // Initialize dimensions object after initializing the DOM, the menu may
+    // not have accurate dimensions before it has been added to the DOM.
+    this._dimensions = { 
+      width: this._$menu.outerWidth(true /* include margins */),
+      height: this._$menu.outerHeight(true /* include margins */)
+    };
+
     this._initializeSizings();
     this._updateAnchorOffsets();
     this._updatePaletteOffset();
@@ -73,6 +83,22 @@ define(['jquery'], function ($) {
   // Number of pixels to offset the anchor point from the anchored elements
   // edge.
   var _EDGE_OFFSET = 1;
+
+
+  // _addMenuElementStyling adds per element sizing on each node in the menu
+  // subtree, hiding the menu.
+  // Arguments:
+  //   $root: Root jQuery object of the menu subtree.
+  Palette.prototype._addMenuElementStyling = function ($root) {
+    var palette = this;
+    $root.css({
+      'top': 0, 'left': 0, 'width': 0, 'height': 0, 'border-width': 0,
+      'padding': 0, 'margin': 0 
+    });
+    $root.children().each(function () {
+      palette._addMenuElementStyling($(this));
+    });
+  };
 
 
   // bound updates the range to which the palette's anchor edge is restricted.
@@ -152,11 +178,15 @@ define(['jquery'], function ($) {
     this._domCache.paletteAnchorBorder.css(hiddenComponentProperties);
     this._domCache.paletteMenuContainer.css(hiddenComponentProperties);
     this._domCache.paletteMenu.css(hiddenComponentProperties);
+
+    this._addMenuElementStyling(this._$menu);
   };
 
 
   // _initializeDOM clears any children of the palette div and adds palette
-  // specific DOM children.
+  // specific DOM children. Must not depend on knowing palette dimensions,
+  // which cannot be accurately determined before the menu has been added to
+  // the DOM
   Palette.prototype._initializeDOM = function () {
     var $parentElement = this._$sibling.parent();
 
@@ -175,6 +205,7 @@ define(['jquery'], function ($) {
       'class': 'dk-palette-menu'
     });
     this._domCache.paletteMenuContainer.append(this._domCache.paletteMenu);
+    this._domCache.paletteMenu.append(this._$menu);
 
     this._domCache.paletteAnchorBorder = $('<div/>', {
       'class': 'dk-palette-anchor-border-' + this._anchorEdge,
@@ -185,6 +216,21 @@ define(['jquery'], function ($) {
       'class': 'dk-palette-anchor-' + this._anchorEdge,
     });
     this._domCache.palette.append(this._domCache.paletteAnchor);
+
+    this._initializeMenu(this._$menu);
+  };
+
+
+  // _initializeMenu adds the transition class to all children in the _$menu
+  // subtree.
+  // Arguments:
+  //   $root: The jQuery object root of the menu tree.
+  Palette.prototype._initializeMenu = function ($root) {
+    var palette = this;
+    $root.addClass('dk-palette-transition'); 
+    $root.children().each(function () {
+      palette._initializeMenu($(this)); 
+    });
   };
 
 
@@ -218,6 +264,22 @@ define(['jquery'], function ($) {
 
     this._sizingCache.paletteDimensions[anchoredEdgeDimension] +=
         this._sizingCache.anchorBorderHeight;
+  };
+
+
+  // _removeMenuElementStyling clears all per element sizing on each node in
+  // the menu subtree.
+  // Arguments:
+  //   $root: Root jQuery object of the menu subtree.
+  Palette.prototype._removeMenuElementStyling = function ($root) {
+    var palette = this;
+    $root.css({
+      'top': '', 'left': '', 'width': '', 'height': '', 'border-width': '',
+      'padding': '', 'margin': ''
+    });
+    $root.children().each(function () {
+      palette._removeMenuElementStyling($(this));
+    });
   };
 
 
@@ -324,7 +386,10 @@ define(['jquery'], function ($) {
       'border-width': '',
       'padding': ''
     });
+
+    this._removeMenuElementStyling(this._$menu);
   };
+
 
   // _updatePaletteOffset updates the offset for the menu container
   // child of the palette, attempting to keep the container within the
