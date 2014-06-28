@@ -1,13 +1,13 @@
-define(['jquery'], function ($) {
+define(['jquery', 'domkit'], function ($, Domkit) {
 
   var _DATA_FIELD_KEY = '_data_dk_button_object';
 
 
   // Button extends the HTML button element, giving default behaviors.
   // Arguments:
-  //   domID: A CSS style id selector.
-  var Button = function (domID) {
-    this._$element = $(domID);
+  //   jQueryOrDomID: A CSS style id selector or jQuery object.
+  var Button = function (jQueryOrDomID) {
+    this._$element = Domkit.validateOrRetrieveJQueryObject(jQueryOrDomID);
     this._toggleable = this._$element.hasClass('dk-toggleable-button') ||
         this._$element.hasClass('dk-toggleable-button-active');
     this._toggled = this._toggleable &&

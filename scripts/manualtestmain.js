@@ -58,5 +58,9 @@ require(['jquery', 'controllers/radiogroup', 'ui/palette', 'ui/button'],
 			isVisible: false,
 			anchorEdgeBounds: { min: 0, max: Infinity }
 		});
+
+    $('#test-menu').children('button').each(function () {
+      Button.create($(this));
+    });
 	});
 });

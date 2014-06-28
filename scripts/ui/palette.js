@@ -1,4 +1,4 @@
-define(['jquery'], function ($) {
+define(['jquery', 'domkit'], function ($, Domkit) {
   // Palette objects are rectangular menus with rounded corners that are
   // anchored to a location on the page by a triangular point.
   // Arguments:
@@ -39,9 +39,9 @@ define(['jquery'], function ($) {
       menuContainerPadding: null,
       paletteDimensions: null
     };
-    this._$sibling = this._validateOrRetrieveJQueryObject(params.sibling);
+    this._$sibling = Domkit.validateOrRetrieveJQueryObject(params.sibling);
     this._anchorPosition = this._calculateAnchorPosistion();
-    this._$menu = this._validateOrRetrieveJQueryObject(params.menu);
+    this._$menu = Domkit.validateOrRetrieveJQueryObject(params.menu);
     if (this._$menu.parent().length > 0) this._$menu.detach();
 
     this._initializeDOM();
@@ -431,23 +431,6 @@ define(['jquery'], function ($) {
       this._paletteOffset[unconstrainedDimension] -=
           this._sizingCache.borderWidth;
     }
-  };
-
-
-  // _validateOrRetrieveJQueryObject retrieves the jQuery object given a
-  // jQuery object or DOM ID
-  // Arguments:
-  //   jQueryOrID: A jQuery object or a DOM ID for a element.
-  Palette.prototype._validateOrRetrieveJQueryObject = function (jQueryOrID) {
-    if (jQueryOrID instanceof $) return jQueryOrID;
-    else if (typeof jQueryOrID === 'string') {
-      var $element = $(jQueryOrID);
-      if ($element.length === 1) return $element;
-    }
-
-    throw Error(
-        'Cannot initalize the sibling for a palette menu with a non jQuery ' +
-        'object or DOM ID');
   };
 
 
