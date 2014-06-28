@@ -3,13 +3,14 @@ define(['jquery'], function ($) {
   // anchored to a location on the page by a triangular point.
   // Arguments:
   //   params: Object with the following key and value pairs.
-  //     domID: CSS DOM ID of the DOM element to which the palette is attached.
+  //     sibling: CSS DOM ID of the DOM element to which the palette is
+  //         attached or a single jQuery element.
   //     anchorEdge: The edge of the element to which the palette is anchored.
   //         One of Palette.ANCHOR_EDGES.
-  //     menuElements: A jQuery object root of a DOM based menu that the
-  //         palette will contain. This DOM tree must be sized completely
-  //         class based rules, per element rules will be overwritten by the
-  //         palette.
+  //     menu: CSS DOM ID of the root node of the menu to detach from the DOM
+  //         or a jQuery object root of a DOM based menu that the palette will
+  //         contain. This DOM tree must be sized completely class based rules,
+  //         per element rules will be overwritten by the palette.
   //     isVisible: Optional, whether the palette should be shown when created.
   //         Defaults to false.
   //     anchorEdgeBounds: Optional, an object with 'min' and 'max' fields.
@@ -30,10 +31,7 @@ define(['jquery'], function ($) {
       paletteMenuContainer: null,
       paletteMenu: null
     };
-    this._$menu = params.menuElements;
     this._paletteOffset = { x: 0, y: 0 };
-    this._siblingDomID = params.domID;
-    this._$sibling = $(this._siblingDomID);
     this._sizingCache = {
       anchorHeight: null,
       anchorBorderHeight: null,
@@ -41,7 +39,10 @@ define(['jquery'], function ($) {
       menuContainerPadding: null,
       paletteDimensions: null
     };
+    this._$sibling = this._validateOrRetrieveJQueryObject(params.sibling);
     this._anchorPosition = this._calculateAnchorPosistion();
+    this._$menu = this._validateOrRetrieveJQueryObject(params.menu);
+    if (this._$menu.parent().length > 0) this._$menu.detach();
 
     this._initializeDOM();
 
@@ -441,6 +442,23 @@ define(['jquery'], function ($) {
       this._paletteOffset[unconstrainedDimension] -=
           this._sizingCache.borderWidth;
     }
+  };
+
+
+  // _validateOrRetrieveJQueryObject retrieves the jQuery object given a
+  // jQuery object or DOM ID
+  // Arguments:
+  //   jQueryOrID: A jQuery object or a DOM ID for a element.
+  Palette.prototype._validateOrRetrieveJQueryObject = function (jQueryOrID) {
+    if (jQueryOrID instanceof $) return jQueryOrID;
+    else if (typeof jQueryOrID === 'string') {
+      var $element = $(jQueryOrID);
+      if ($element.length === 1) return $element;
+    }
+
+    throw Error(
+        'Cannot initalize the sibling for a palette menu with a non jQuery ' +
+        'object or DOM ID');
   };
 
 
