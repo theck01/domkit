@@ -1,8 +1,17 @@
 {
   "name": "domkit",
-  "description": "A set of reusable DOM based UI components.",
   "version": "0.1.0",
-  "private": true,
+  "homepage": "https://github.com/theck01/domkit",
+  "authors": [
+    "Tyler Heck <tyler.heck@gmail.com>"
+  ],
+  "description": "A set of reusable DOM based UI components.",
+  "keywords": [
+    "domkit",
+    "ui",
+    "components"
+  ],
+  "license": "MIT",
   "dependencies": {
     "requirejs": "~2.1.11",
     "jquery": "~2.0.3"
