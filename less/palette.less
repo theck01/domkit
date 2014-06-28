@@ -5,28 +5,44 @@
 @palette-border-width: 2px;
 @palette-menu-container-padding: @palette-border-radius;
 @palette-anchor-border-height: @palette-border-width + @palette-anchor-height;
-@palette-transition-duration: 0.3s;
+@palette-med-transition: 0.3s;
+@palette-long-transition: 0.45s;
+@palette-short-transition: 0.15s;
 @palette-transition-type: cubic-bezier(0.645, 0.045, 0.355, 1);
 
 
-.dk-palette-transition {
-  transition: width @palette-transition-duration @palette-transition-type,
-              height @palette-transition-duration @palette-transition-type,
-              top @palette-transition-duration @palette-transition-type,
-              left @palette-transition-duration @palette-transition-type,
-              border-width @palette-transition-duration @palette-transition-type,
-              padding @palette-transition-duration @palette-transition-type;
+.dk-palette-disappear-transition {
+  transition: width @palette-med-transition @palette-transition-type,
+              height @palette-med-transition @palette-transition-type,
+              top @palette-med-transition @palette-transition-type,
+              left @palette-med-transition @palette-transition-type,
+              border-width @palette-med-transition @palette-transition-type,
+              padding @palette-med-transition @palette-transition-type,
+              opacity @palette-short-transition @palette-transition-type,
+              font-size @palette-short-transition @palette-transition-type;
+}
+
+
+.dk-palette-appear-transition {
+  transition: width @palette-med-transition @palette-transition-type,
+              height @palette-med-transition @palette-transition-type,
+              top @palette-med-transition @palette-transition-type,
+              left @palette-med-transition @palette-transition-type,
+              border-width @palette-med-transition @palette-transition-type,
+              padding @palette-med-transition @palette-transition-type,
+              opacity @palette-long-transition @palette-transition-type,
+              font-size @palette-med-transition @palette-transition-type;
 }
 
 
 .dk-palette {
-  .dk-palette-transition();
+  .dk-palette-appear-transition;
   position: absolute;
 }
 
 
 .dk-palette-menu-container {
-  .dk-palette-transition();
+  .dk-palette-appear-transition;
   position: absolute;
   background: @palette-background-color;
   border-radius: @palette-border-radius;
@@ -36,13 +52,13 @@
 
 
 .dk-palette-menu {
-  .dk-palette-transition();
+  .dk-palette-appear-transition;
   position: absolute;
 };
 
 
 .dk-palette-anchor-left {
-  .dk-palette-transition();
+  .dk-palette-appear-transition;
   width: 0px;
   height: 0px;
   position: absolute;
@@ -53,7 +69,7 @@
 
 
 .dk-palette-anchor-border-left {
-  .dk-palette-transition();
+  .dk-palette-appear-transition;
   width: 0px;
   height: 0px;
   position: absolute;
@@ -64,7 +80,7 @@
 
 
 .dk-palette-anchor-right {
-  .dk-palette-transition();
+  .dk-palette-appear-transition;
   width: 0px;
   height: 0px;
   position: absolute;
@@ -75,7 +91,7 @@
 
 
 .dk-palette-anchor-border-right {
-  .dk-palette-transition();
+  .dk-palette-appear-transition;
   width: 0px;
   height: 0px;
   position: absolute;
@@ -86,7 +102,7 @@
 
 
 .dk-palette-anchor-top {
-  .dk-palette-transition();
+  .dk-palette-appear-transition;
   width: 0px;
   height: 0px;
   position: absolute;
@@ -97,7 +113,7 @@
 
 
 .dk-palette-anchor-border-top {
-  .dk-palette-transition();
+  .dk-palette-appear-transition;
   width: 0px;
   height: 0px;
   position: absolute;
@@ -108,7 +124,7 @@
 
 
 .dk-palette-anchor-bottom {
-  .dk-palette-transition();
+  .dk-palette-appear-transition;
   width: 0px;
   height: 0px;
   position: absolute;
@@ -119,7 +135,7 @@
 
 
 .dk-palette-anchor-border-bottom {
-  .dk-palette-transition();
+  .dk-palette-appear-transition;
   width: 0px;
   height: 0px;
   position: absolute;

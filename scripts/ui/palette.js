@@ -92,9 +92,11 @@ define(['jquery'], function ($) {
   //   $root: Root jQuery object of the menu subtree.
   Palette.prototype._addMenuElementStyling = function ($root) {
     var palette = this;
+    $root.addClass('dk-palette-disappear-transition');
+    $root.removeClass('dk-palette-appear-transition');
     $root.css({
       'top': 0, 'left': 0, 'width': 0, 'height': 0, 'border-width': 0,
-      'padding': 0, 'margin': 0 
+      'padding': 0, 'margin': 0, 'opacity': 0, 'font-size': 0
     });
     $root.children().each(function () {
       palette._addMenuElementStyling($(this));
@@ -217,21 +219,6 @@ define(['jquery'], function ($) {
       'class': 'dk-palette-anchor-' + this._anchorEdge,
     });
     this._domCache.palette.append(this._domCache.paletteAnchor);
-
-    this._initializeMenu(this._$menu);
-  };
-
-
-  // _initializeMenu adds the transition class to all children in the _$menu
-  // subtree.
-  // Arguments:
-  //   $root: The jQuery object root of the menu tree.
-  Palette.prototype._initializeMenu = function ($root) {
-    var palette = this;
-    $root.addClass('dk-palette-transition'); 
-    $root.children().each(function () {
-      palette._initializeMenu($(this)); 
-    });
   };
 
 
@@ -274,9 +261,11 @@ define(['jquery'], function ($) {
   //   $root: Root jQuery object of the menu subtree.
   Palette.prototype._removeMenuElementStyling = function ($root) {
     var palette = this;
+    $root.addClass('dk-palette-appear-transition');
+    $root.removeClass('dk-palette-disappear-transition');
     $root.css({
       'top': '', 'left': '', 'width': '', 'height': '', 'border-width': '',
-      'padding': '', 'margin': ''
+      'padding': '', 'margin': '', 'opacity': '', 'font-size': ''
     });
     $root.children().each(function () {
       palette._removeMenuElementStyling($(this));
