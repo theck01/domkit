@@ -15,5 +15,13 @@
   "dependencies": {
     "requirejs": "~2.1.11",
     "jquery": "~2.0.3"
-  }
+  },
+  "ignore": [
+    "bower_components/*",
+    "node_modules/*",
+    "index.html",
+    "scripts/manualtestmain.js",
+    "less/manualtest.less",
+    "css/manualtest.css"
+  ]
 }
