@@ -37,26 +37,23 @@ require(['jquery', 'controllers/radiogroup', 'ui/palette', 'ui/button'],
 
     new RadioGroup(radioButtons);
 
-    $('.dk-button').width(100).height(50);
-    $('.dk-toggleable-button').width(100).height(50);
-
 		testPalettes[0] = new Palette({
-			domID: '#test-radio-0',
-			menuElements: $('<div/>', { 'class': 'placeholder' }),
+			sibling: '#test-radio-0',
+			menu: $('<div/>', { 'class': 'placeholder' }),
 			anchorEdge: Palette.ANCHOR_EDGES.BOTTOM,
 			isVisible: false,
 			anchorEdgeBounds: { min: 0, max: Infinity }
 		});
 		testPalettes[1] = new Palette({
-			domID: '#test-radio-1',
-			menuElements: $('<div/>', { 'class': 'placeholder' }),
+			sibling: '#test-radio-1',
+			menu: '#test-menu',
 			anchorEdge: Palette.ANCHOR_EDGES.BOTTOM,
 			isVisible: false,
 			anchorEdgeBounds: { min: 0, max: Infinity }
 		});
 		testPalettes[2] = new Palette({
-			domID: '#test-radio-2',
-			menuElements: $('<div/>', { 'class': 'placeholder' }),
+			sibling: '#test-radio-2',
+			menu: $('<div/>', { 'class': 'placeholder' }),
 			anchorEdge: Palette.ANCHOR_EDGES.BOTTOM,
 			isVisible: false,
 			anchorEdgeBounds: { min: 0, max: Infinity }
