@@ -1,6 +1,6 @@
 {
   "name": "domkit",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "homepage": "https://github.com/theck01/domkit",
   "authors": [
     "Tyler Heck <tyler.heck@gmail.com>"
@@ -17,8 +17,6 @@
     "jquery": "~2.0.3"
   },
   "ignore": [
-    "bower_components/*",
-    "node_modules/*",
     "index.html",
     "scripts/manualtestmain.js",
     "less/manualtest.less",
