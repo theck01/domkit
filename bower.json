@@ -17,6 +17,8 @@
     "jquery": "~2.0.3"
   },
   "ignore": [
+    "Makefile",
+    "package.json",
     "index.html",
     "scripts/manualtestmain.js",
     "less/manualtest.less",
