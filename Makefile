@@ -1,8 +1,8 @@
 # css task variables
 LESSC = node_modules/.bin/lessc
 LESS_FLAGS = -x
-LESS_DIR = less
-CSS_DIR = css
+LESS_DIR = domkit/less
+CSS_DIR = domkit/css
 LESS_FILES = $(wildcard $(LESS_DIR)/*.less)
 CSS_FILES = $(patsubst $(LESS_DIR)/%.less, $(CSS_DIR)/%.css, $(LESS_FILES))
 
