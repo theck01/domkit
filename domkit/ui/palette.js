@@ -1,4 +1,4 @@
-define(['jquery', 'domkit'], function ($, Domkit) {
+define(['jquery', 'domkit/domkit'], function ($, Domkit) {
   // Palette objects are rectangular menus with rounded corners that are
   // anchored to a location on the page by a triangular point.
   // Arguments:

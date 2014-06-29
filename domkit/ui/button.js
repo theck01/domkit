@@ -1,4 +1,4 @@
-define(['jquery', 'domkit'], function ($, Domkit) {
+define(['jquery', 'domkit/domkit'], function ($, Domkit) {
 
   var _DATA_FIELD_KEY = '_data_dk_button_object';
 

@@ -1,11 +1,13 @@
 require.config({
+  baseUrl: '.',
   paths: {
-    jquery: '../bower_components/jquery/jquery.min'
+    jquery: 'bower_components/jquery/jquery.min'
   }
 });
 
 
-require(['jquery', 'controllers/radiogroup', 'ui/palette', 'ui/button'],
+require(['jquery', 'domkit/controllers/radiogroup', 'domkit/ui/palette',
+    'domkit/ui/button'],
     function($, RadioGroup, Palette, Button) {
 	$(function () {
     var regularButton = Button.create('#test-button');
