@@ -20,8 +20,8 @@
     "Makefile",
     "package.json",
     "index.html",
-    "scripts/manualtestmain.js",
-    "less/manualtest.less",
-    "css/manualtest.css"
+    "domkit/manualtestmain.js",
+    "domkit/css/manualtest.css",
+    "domkit/less/manualtest.less"
   ]
 }
