@@ -9,7 +9,7 @@ require.config({
 require(['jquery', 'domkit/controllers/radiogroup', 'domkit/ui/palette',
     'domkit/ui/button'],
     function($, RadioGroup, Palette, Button) {
-	$(function () {
+  $(function () {
     var regularButton = Button.create('#test-button');
     regularButton.addClickHandler(function () {
       console.log('Button clicked.');
@@ -37,32 +37,32 @@ require(['jquery', 'domkit/controllers/radiogroup', 'domkit/ui/palette',
       testPalettes[2].visible(toggleState);
     });
 
-    new RadioGroup(radioButtons);
+    window.radioGroup = new RadioGroup(radioButtons);
 
-		testPalettes[0] = new Palette({
-			sibling: '#test-radio-0',
-			menu: $('<div/>', { 'class': 'placeholder' }),
-			anchorEdge: Palette.ANCHOR_EDGES.BOTTOM,
-			isVisible: false,
-			anchorEdgeBounds: { min: 0, max: Infinity }
-		});
-		testPalettes[1] = new Palette({
-			sibling: '#test-radio-1',
-			menu: '#test-menu',
-			anchorEdge: Palette.ANCHOR_EDGES.BOTTOM,
-			isVisible: false,
-			anchorEdgeBounds: { min: 0, max: Infinity }
-		});
-		testPalettes[2] = new Palette({
-			sibling: '#test-radio-2',
-			menu: $('<div/>', { 'class': 'placeholder' }),
-			anchorEdge: Palette.ANCHOR_EDGES.BOTTOM,
-			isVisible: false,
-			anchorEdgeBounds: { min: 0, max: Infinity }
-		});
+    testPalettes[0] = new Palette({
+      sibling: '#test-radio-0',
+      menu: $('<div/>', { 'class': 'placeholder' }),
+      anchorEdge: Palette.ANCHOR_EDGES.BOTTOM,
+      isVisible: false,
+      anchorEdgeBounds: { min: 0, max: Infinity }
+    });
+    testPalettes[1] = new Palette({
+      sibling: '#test-radio-1',
+      menu: '#test-menu',
+      anchorEdge: Palette.ANCHOR_EDGES.BOTTOM,
+      isVisible: false,
+      anchorEdgeBounds: { min: 0, max: Infinity }
+    });
+    testPalettes[2] = new Palette({
+      sibling: '#test-radio-2',
+      menu: $('<div/>', { 'class': 'placeholder' }),
+      anchorEdge: Palette.ANCHOR_EDGES.BOTTOM,
+      isVisible: false,
+      anchorEdgeBounds: { min: 0, max: Infinity }
+    });
 
     $('#test-menu').children('button').each(function () {
       Button.create($(this));
     });
-	});
+  });
 });

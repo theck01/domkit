@@ -44,6 +44,13 @@ define([], function () {
   };
 
 
+  // clear the active element in the radio group, if one exists.
+  RadioGroup.prototype.clear = function () {
+    if (this._activeIndex < 0) return;
+    this._toggleableElements[this._activeIndex].setState(false);
+  };
+
+
   // destroy the radio group, removing all handers from the elements
   RadioGroup.prototype.destroy = function () {
     for (var i = 0; i < this._toggeableElements; i++) {
