@@ -92,15 +92,18 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
   //   $root: Root jQuery object of the menu subtree.
   Palette.prototype._addMenuElementStyling = function ($root) {
     var palette = this;
-    $root.addClass('dk-palette-disappear-transition');
-    $root.removeClass('dk-palette-appear-transition');
-    $root.css({
-      'top': 0, 'left': 0, 'width': 0, 'height': 0, 'border-width': 0,
-      'padding': 0, 'margin': 0, 'opacity': 0, 'font-size': 0
-    });
     $root.children().each(function () {
       palette._addMenuElementStyling($(this));
     });
+
+    if (!$root.hasClass('dk-palette-no-transition')) {
+      $root.addClass('dk-palette-disappear-transition');
+      $root.removeClass('dk-palette-appear-transition');
+      $root.css({
+        'top': 0, 'left': 0, 'width': 0, 'height': 0, 'border-width': 0,
+        'padding': 0, 'margin': 0, 'opacity': 0, 'font-size': 0
+      });
+    }
   };
 
 
@@ -261,15 +264,17 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
   //   $root: Root jQuery object of the menu subtree.
   Palette.prototype._removeMenuElementStyling = function ($root) {
     var palette = this;
-    $root.addClass('dk-palette-appear-transition');
-    $root.removeClass('dk-palette-disappear-transition');
-    $root.css({
-      'top': '', 'left': '', 'width': '', 'height': '', 'border-width': '',
-      'padding': '', 'margin': '', 'opacity': '', 'font-size': ''
-    });
     $root.children().each(function () {
       palette._removeMenuElementStyling($(this));
     });
+    if (!$root.hasClass('dk-palette-no-transition')) {
+      $root.addClass('dk-palette-appear-transition');
+      $root.removeClass('dk-palette-disappear-transition');
+      $root.css({
+        'top': '', 'left': '', 'width': '', 'height': '', 'border-width': '',
+        'padding': '', 'margin': '', 'opacity': '', 'font-size': ''
+      });
+    }
   };
 
 
@@ -434,8 +439,9 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
   };
 
 
-  // visible sets the palette to be visible, with optional animation duration
-  // to expand or shink the palette from the anchor point.
+  // visible sets the palette to be visible. Elements with the class
+  // .dk-palette-no-transition will not have a transition animation applied to
+  // go with the palette disappear/appear transition.
   //
   // Arguments
   Palette.prototype.visible = function (isVisible) {
