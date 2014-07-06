@@ -81,28 +81,59 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
   _OPPOSITE_ANCHOR_EDGES[Palette.ANCHOR_EDGES.BOTTOM] =
       Palette.ANCHOR_EDGES.TOP;
 
+  // Class that prevents the element from having a transition applied when the
+  // palette is hidden/shown.
+  Palette.NO_TRANSITION_CLASS = 'dk-palette-no-transition';
+
   // Number of pixels to offset the anchor point from the anchored elements
   // edge.
   var _EDGE_OFFSET = 1;
 
+  // CSS values when hiding palette and children
+  var _PALETTE_HIDE_CSS = {
+    'top': 0, 'left': 0, 'width': 0, 'height': 0, 'border-width': 0,
+    'padding': 0, 'margin': 0, 'opacity': 0, 'font-size': 0
+  };
 
-  // _addMenuElementStyling adds per element sizing on each node in the menu
-  // subtree, hiding the menu.
+  // CSS class for hide transition
+  var _PALETTE_HIDE_CLASS = 'dk-palette-disappear-transition';
+
+  // CSS values when showing hidden palette and children
+  var _PALETTE_SHOW_CSS = {
+    'top': '', 'left': '', 'width': '', 'height': '', 'border-width': '',
+    'padding': '', 'margin': '', 'opacity': '', 'font-size': ''
+  };
+
+  // CSS class for show transition
+  var _PALETTE_SHOW_CLASS = 'dk-palette-appear-transition';
+
+
+  // _changeMenuElementsVisibility updates the elements in the tree starting
+  // at the $root node with the style to show or hide those nodes with a
+  // transition
+  //
   // Arguments:
-  //   $root: Root jQuery object of the menu subtree.
-  Palette.prototype._addMenuElementStyling = function ($root) {
+  //   $root: The jQuery object for the root node of the menu subtree.
+  //   hidden: Whether the nodes in the subtree should be hidden or not.
+  Palette.prototype._changeMenuElementsVisibility = function ($root, hidden) {
     var palette = this;
     $root.children().each(function () {
-      palette._addMenuElementStyling($(this));
+      palette._changeMenuElementsVisibility($(this), hidden);
     });
 
-    if (!$root.hasClass('dk-palette-no-transition')) {
-      $root.addClass('dk-palette-disappear-transition');
-      $root.removeClass('dk-palette-appear-transition');
-      $root.css({
-        'top': 0, 'left': 0, 'width': 0, 'height': 0, 'border-width': 0,
-        'padding': 0, 'margin': 0, 'opacity': 0, 'font-size': 0
-      });
+    var newClass = _PALETTE_SHOW_CLASS;
+    var oldClass = _PALETTE_HIDE_CLASS;
+    var newCSS = _PALETTE_SHOW_CSS;
+    if (hidden) {
+      newClass = _PALETTE_HIDE_CLASS;
+      oldClass = _PALETTE_SHOW_CLASS;
+      newCSS = _PALETTE_HIDE_CSS;
+    }
+
+    if (!$root.hasClass(Palette.NO_TRANSITION_CLASS)) {
+      $root.addClass(newClass);
+      $root.removeClass(oldClass);
+      $root.css(newCSS);
     }
   };
 
@@ -185,7 +216,7 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
     this._domCache.paletteMenuContainer.css(hiddenComponentProperties);
     this._domCache.paletteMenu.css(hiddenComponentProperties);
 
-    this._addMenuElementStyling(this._$menu);
+    this._changeMenuElementsVisibility(this._$menu, true /* hidden */);
   };
 
 
@@ -197,29 +228,31 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
     var $parentElement = this._$sibling.parent();
 
     this._domCache.palette = $('<div/>', {
-      'class': 'dk-palette'
+      'class': 'dk-palette dk-palette-appear-transition'
     });
     if (!this._isVisible) this._domCache.palette.hide();
     $parentElement.append(this._domCache.palette);
 
     this._domCache.paletteMenuContainer = $('<div/>', {
-      'class': 'dk-palette-menu-container',
+      'class': 'dk-palette-menu-container dk-palette-appear-transition',
     });
     this._domCache.palette.append(this._domCache.paletteMenuContainer);
 
     this._domCache.paletteMenu = $('<div/>', {
-      'class': 'dk-palette-menu'
+      'class': 'dk-palette-menu dk-palette-appear-transition'
     });
     this._domCache.paletteMenuContainer.append(this._domCache.paletteMenu);
     this._domCache.paletteMenu.append(this._$menu);
 
     this._domCache.paletteAnchorBorder = $('<div/>', {
-      'class': 'dk-palette-anchor-border-' + this._anchorEdge,
+      'class': 'dk-palette-anchor-border-' + this._anchorEdge + ' ' +
+          'dk-palette-appear-transition',
     });
     this._domCache.palette.append(this._domCache.paletteAnchorBorder);
 
     this._domCache.paletteAnchor = $('<div/>', {
-      'class': 'dk-palette-anchor-' + this._anchorEdge,
+      'class': 'dk-palette-anchor-' + this._anchorEdge + ' ' +
+          'dk-palette-appear-transition',
     });
     this._domCache.palette.append(this._domCache.paletteAnchor);
   };
@@ -255,26 +288,6 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
 
     this._sizingCache.paletteDimensions[anchoredEdgeDimension] +=
         this._sizingCache.anchorBorderHeight;
-  };
-
-
-  // _removeMenuElementStyling clears all per element sizing on each node in
-  // the menu subtree.
-  // Arguments:
-  //   $root: Root jQuery object of the menu subtree.
-  Palette.prototype._removeMenuElementStyling = function ($root) {
-    var palette = this;
-    $root.children().each(function () {
-      palette._removeMenuElementStyling($(this));
-    });
-    if (!$root.hasClass('dk-palette-no-transition')) {
-      $root.addClass('dk-palette-appear-transition');
-      $root.removeClass('dk-palette-disappear-transition');
-      $root.css({
-        'top': '', 'left': '', 'width': '', 'height': '', 'border-width': '',
-        'padding': '', 'margin': '', 'opacity': '', 'font-size': ''
-      });
-    }
   };
 
 
@@ -382,7 +395,7 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
       'padding': ''
     });
 
-    this._removeMenuElementStyling(this._$menu);
+    this._changeMenuElementsVisibility(this._$menu, false /* hidden */);
   };
 
 
