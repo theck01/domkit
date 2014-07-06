@@ -34,8 +34,8 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
     this._paletteOffset = { x: 0, y: 0 };
     this._sizingCache = {
       anchorHeight: null,
-      anchorBorderHeight: null,
       borderWidth: null,
+      innerAnchorOffset: null,
       menuContainerPadding: null,
       paletteDimensions: null
     };
@@ -266,10 +266,10 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
 
     this._sizingCache.anchorHeight = parseInt(
         this._domCache.paletteAnchor.css(borderWidthProperty), 10);
-    this._sizingCache.anchorBorderHeight = parseInt(
-        this._domCache.paletteAnchorBorder.css(borderWidthProperty), 10);
     this._sizingCache.borderWidth = parseInt(
         this._domCache.paletteMenuContainer.css('border-width'), 10);
+    this._sizingCache.innerAnchorOffset =
+        Math.floor(this._sizingCache.borderWidth * Math.sqrt(2)) + 1;
     this._sizingCache.menuContainerPadding = parseInt(
         this._domCache.paletteMenuContainer.css('padding'), 10);
 
@@ -287,54 +287,54 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
         this._anchorEdge === Palette.ANCHOR_EDGES.RIGHT ? 'width' : 'height';
 
     this._sizingCache.paletteDimensions[anchoredEdgeDimension] +=
-        this._sizingCache.anchorBorderHeight;
+        this._sizingCache.anchorHeight;
   };
 
 
   // _updateAnchorOffsets updates the offset for the palette anchor and palette
   // anchor children.
   Palette.prototype._updateAnchorOffsets = function () {
-    var heightDiff =
-        this._sizingCache.anchorBorderHeight - this._sizingCache.anchorHeight;
     var halfAnchorHeight = Math.floor(this._sizingCache.anchorHeight / 2);
-    var halfAnchorBorderHeight =
-        Math.floor(this._sizingCache.anchorBorderHeight / 2);
 
     switch (this._anchorEdge) {
       case Palette.ANCHOR_EDGES.TOP:
         this._anchorOffset.x = this._anchorPosition.x - halfAnchorHeight;
-        this._anchorOffset.y = this._anchorPosition.y + heightDiff;
+        this._anchorOffset.y =
+            this._anchorPosition.y + this._sizingCache.innerAnchorOffset;
         this._anchorBorderOffset.x =
-            this._anchorPosition.x - halfAnchorBorderHeight;
+            this._anchorPosition.x - halfAnchorHeight;
         this._anchorBorderOffset.y = this._anchorPosition.y;
         break;
 
       case Palette.ANCHOR_EDGES.LEFT:
-        this._anchorOffset.x = this._anchorPosition.x + heightDiff;
+        this._anchorOffset.x =
+            this._anchorPosition.x + this._sizingCache.innerAnchorOffset;
         this._anchorOffset.y = this._anchorPosition.y - halfAnchorHeight;
         this._anchorBorderOffset.x = this._anchorPosition.x;
         this._anchorBorderOffset.y = 
-            this._anchorPosition.y - halfAnchorBorderHeight;
+            this._anchorPosition.y - halfAnchorHeight;
         break;
 
       case Palette.ANCHOR_EDGES.RIGHT:
         this._anchorOffset.x =
-            this._anchorPosition.x - this._sizingCache.anchorBorderHeight;
+            this._anchorPosition.x - this._sizingCache.anchorHeight -
+            this._sizingCache.innerAnchorOffset;
         this._anchorOffset.y = this._anchorPosition.y - halfAnchorHeight;
         this._anchorBorderOffset.x = 
-            this._anchorPosition.x - this._sizingCache.anchorBorderHeight;
+            this._anchorPosition.x - this._sizingCache.anchorHeight;
         this._anchorBorderOffset.y = 
-            this._anchorPosition.y - halfAnchorBorderHeight;
+            this._anchorPosition.y - halfAnchorHeight;
         break;
 
       case Palette.ANCHOR_EDGES.BOTTOM:
         this._anchorOffset.x = this._anchorPosition.x - halfAnchorHeight;
         this._anchorOffset.y =
-            this._anchorPosition.y - this._sizingCache.anchorBorderHeight;
+            this._anchorPosition.y - this._sizingCache.anchorHeight -
+            this._sizingCache.innerAnchorOffset;
         this._anchorBorderOffset.x =
-            this._anchorPosition.x - halfAnchorBorderHeight;
+            this._anchorPosition.x - halfAnchorHeight;
         this._anchorBorderOffset.y =
-            this._anchorPosition.y - this._sizingCache.anchorBorderHeight;
+            this._anchorPosition.y - this._sizingCache.anchorHeight;
         break;
 
       default:
@@ -379,9 +379,9 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
     };
 
     if (this._anchorEdge === Palette.ANCHOR_EDGES.TOP) {
-        menuContainerOffset.top += this._sizingCache.anchorBorderHeight;
+        menuContainerOffset.top += this._sizingCache.anchorHeight;
     } else if (this._anchorEdge === Palette.ANCHOR_EDGES.LEFT) {
-        menuContainerOffset.left += this._sizingCache.anchorBorderHeight;
+        menuContainerOffset.left += this._sizingCache.anchorHeight;
     }
 
     this._domCache.paletteMenuContainer.css(menuContainerOffset);

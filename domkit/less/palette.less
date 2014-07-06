@@ -4,7 +4,6 @@
 @palette-anchor-height: 10px;
 @palette-background-color: #f7f7f7;
 @palette-menu-container-padding: @domkit-border-radius;
-@palette-anchor-border-height: @domkit-border-width + @palette-anchor-height;
 @palette-med-transition: 0.3s;
 @palette-long-transition: 0.45s;
 @palette-short-transition: 0.15s;
@@ -68,9 +67,9 @@
   width: 0px;
   height: 0px;
   position: absolute;
-  border-top: @palette-anchor-border-height solid transparent;
-  border-right: (@palette-anchor-border-height * 2) solid @domkit-border-color;
-  border-bottom: @palette-anchor-border-height solid transparent;
+  border-top: @palette-anchor-height solid transparent;
+  border-right: (@palette-anchor-height * 2) solid @domkit-border-color;
+  border-bottom: @palette-anchor-height solid transparent;
 }
 
 
@@ -88,9 +87,9 @@
   width: 0px;
   height: 0px;
   position: absolute;
-  border-top: @palette-anchor-border-height solid transparent;
-  border-left: (@palette-anchor-border-height * 2) solid @domkit-border-color;
-  border-bottom: @palette-anchor-border-height solid transparent;
+  border-top: @palette-anchor-height solid transparent;
+  border-left: (@palette-anchor-height * 2) solid @domkit-border-color;
+  border-bottom: @palette-anchor-height solid transparent;
 }
 
 
@@ -108,9 +107,9 @@
   width: 0px;
   height: 0px;
   position: absolute;
-  border-left: @palette-anchor-border-height solid transparent;
-  border-right: @palette-anchor-border-height solid transparent;
-  border-bottom: (@palette-anchor-border-height * 2) solid @domkit-border-color;
+  border-left: @palette-anchor-height solid transparent;
+  border-right: @palette-anchor-height solid transparent;
+  border-bottom: (@palette-anchor-height * 2) solid @domkit-border-color;
 }
 
 
@@ -128,7 +127,7 @@
   width: 0px;
   height: 0px;
   position: absolute;
-  border-top: (@palette-anchor-border-height * 2) solid @domkit-border-color;
-  border-left: @palette-anchor-border-height solid transparent;
-  border-right: @palette-anchor-border-height solid transparent;
+  border-top: (@palette-anchor-height * 2) solid @domkit-border-color;
+  border-left: @palette-anchor-height solid transparent;
+  border-right: @palette-anchor-height solid transparent;
 }
