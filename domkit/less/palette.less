@@ -1,10 +1,10 @@
+@import "common";
+
+
 @palette-anchor-height: 10px;
 @palette-background-color: #f7f7f7;
-@palette-border-color: #979797;
-@palette-border-radius: 8px;
-@palette-border-width: 1px;
-@palette-menu-container-padding: @palette-border-radius;
-@palette-anchor-border-height: @palette-border-width + @palette-anchor-height;
+@palette-menu-container-padding: @domkit-border-radius;
+@palette-anchor-border-height: @domkit-border-width + @palette-anchor-height;
 @palette-med-transition: 0.3s;
 @palette-long-transition: 0.45s;
 @palette-short-transition: 0.15s;
@@ -45,8 +45,8 @@
   .dk-palette-appear-transition;
   position: absolute;
   background: @palette-background-color;
-  border-radius: @palette-border-radius;
-  border: @palette-border-width solid @palette-border-color;
+  border-radius: @domkit-border-radius;
+  border: @domkit-border-width solid @domkit-border-color;
   padding: @palette-menu-container-padding;
 }
 
@@ -74,7 +74,7 @@
   height: 0px;
   position: absolute;
   border-top: @palette-anchor-border-height solid transparent;
-  border-right: (@palette-anchor-border-height * 2) solid @palette-border-color;
+  border-right: (@palette-anchor-border-height * 2) solid @domkit-border-color;
   border-bottom: @palette-anchor-border-height solid transparent;
 }
 
@@ -96,7 +96,7 @@
   height: 0px;
   position: absolute;
   border-top: @palette-anchor-border-height solid transparent;
-  border-left: (@palette-anchor-border-height * 2) solid @palette-border-color;
+  border-left: (@palette-anchor-border-height * 2) solid @domkit-border-color;
   border-bottom: @palette-anchor-border-height solid transparent;
 }
 
@@ -119,7 +119,7 @@
   position: absolute;
   border-left: @palette-anchor-border-height solid transparent;
   border-right: @palette-anchor-border-height solid transparent;
-  border-bottom: (@palette-anchor-border-height * 2) solid @palette-border-color;
+  border-bottom: (@palette-anchor-border-height * 2) solid @domkit-border-color;
 }
 
 
@@ -139,7 +139,7 @@
   width: 0px;
   height: 0px;
   position: absolute;
-  border-top: (@palette-anchor-border-height * 2) solid @palette-border-color;
+  border-top: (@palette-anchor-border-height * 2) solid @domkit-border-color;
   border-left: @palette-anchor-border-height solid transparent;
   border-right: @palette-anchor-border-height solid transparent;
 }
