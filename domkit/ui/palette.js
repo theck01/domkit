@@ -1,4 +1,6 @@
-define(['jquery', 'domkit/domkit'], function ($, Domkit) {
+define(
+    ['jquery', 'domkit/domkit', 'domkit/util/handlercollection'],
+    function ($, Domkit, HandlerCollection) {
   // Palette objects are rectangular menus with rounded corners that are
   // anchored to a location on the page by a triangular point.
   // Arguments:
@@ -17,6 +19,8 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
   //         The space in which the anchor edge can exist, must be larger than
   //         that edge of the palette or an error will be thrown.
   var Palette = function (params) {
+    HandlerCollection.call(this);
+
     this._anchorBorderOffset = { x: 0, y: 0 };
     this._anchorEdge = _OPPOSITE_ANCHOR_EDGES[params.anchorEdge];
     this._anchorEdgeBounds = params.anchorEdgeBounds || {
@@ -40,6 +44,8 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
       paletteDimensions: null
     };
     this._$sibling = Domkit.validateOrRetrieveJQueryObject(params.sibling);
+    this._visibleStateHandlers = [];
+
     this._anchorPosition = this._calculateAnchorPosistion();
     this._$menu = Domkit.validateOrRetrieveJQueryObject(params.menu);
     if (this._$menu.parent().length > 0) this._$menu.detach();
@@ -59,6 +65,8 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
     if (this._isVisible) this._updateDOM();
     else this._hideDOM();
   };
+  Palette.prototype = Object.create(HandlerCollection.prototype);
+  Palette.prototype.constructor = Palette;
 
 
   // ANCHOR_EDGES enumeration of the edge which can be anchored to 
@@ -106,6 +114,15 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
 
   // CSS class for show transition
   var _PALETTE_SHOW_CLASS = 'dk-palette-appear-transition';
+
+
+  // addVisibleStateHandler registers a function to handle visibility changes
+  // of the palette.
+  //
+  // Arguments:
+  //   handler: Function that takes a boolean argument, whether the palette is
+  //       visible.
+  Palette.prototype.addVisibleStateHandler = Palette.prototype._addHandler;
 
 
   // _changeMenuElementsVisibility updates the elements in the tree starting
@@ -291,6 +308,15 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
   };
 
 
+  // removeVisibleStateHandler removes a function should no longer handle
+  // visibility changes of the palette.
+  //
+  // Arguments:
+  //   handler: Function that takes a boolean argument, whether the palette is
+  //       visible.
+  Palette.prototype.removeVisibleStateHandler = Palette.prototype._removeHandler;
+
+
   // _updateAnchorOffsets updates the offset for the palette anchor and palette
   // anchor children.
   Palette.prototype._updateAnchorOffsets = function () {
@@ -468,6 +494,7 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
       this._hideDOM();
       this._isVisible = false;
     }
+    this._callHandlers(isVisible);
   };
 
 

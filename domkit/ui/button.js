@@ -1,4 +1,6 @@
-define(['jquery', 'domkit/domkit'], function ($, Domkit) {
+define(
+    ['jquery', 'domkit/domkit', 'domkit/util/handlercollection'],
+    function ($, Domkit, HandlerCollection) {
 
   var _DATA_FIELD_KEY = '_data_dk_button_object';
 
@@ -7,22 +9,23 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
   // Arguments:
   //   jQueryOrDomID: A CSS style id selector or jQuery object.
   var Button = function (jQueryOrDomID) {
+    HandlerCollection.call(this);
+
     this._$element = Domkit.validateOrRetrieveJQueryObject(jQueryOrDomID);
     this._toggleable = this._$element.hasClass('dk-toggleable-button') ||
         this._$element.hasClass('dk-toggleable-button-active');
     this._toggled = this._toggleable &&
         this._$element.hasClass('dk-toggleable-button-active');
-    this._handlers = Object.create(null);
+    this._interactionHandlers = Object.create(null);
     this._mouseDown = false;
-    this._onClickHandlers = [];
 
-    this._handlers.mousePress = this._handlePress.bind(this);
-    this._handlers.mouseRelease = this._handleRelease.bind(this);
-    this._handlers.mouseLeave = this._handleLeave.bind(this);
+    this._interactionHandlers.mousePress = this._handlePress.bind(this);
+    this._interactionHandlers.mouseRelease = this._handleRelease.bind(this);
+    this._interactionHandlers.mouseLeave = this._handleLeave.bind(this);
 
-    this._$element.bind('mousedown', this._handlers.mousePress);
-    this._$element.bind('mouseup', this._handlers.mouseRelease);
-    this._$element.bind('mouseleave', this._handlers.mouseLeave);
+    this._$element.bind('mousedown', this._interactionHandlers.mousePress);
+    this._$element.bind('mouseup', this._interactionHandlers.mouseRelease);
+    this._$element.bind('mouseleave', this._interactionHandlers.mouseLeave);
 
     this._$element.data(_DATA_FIELD_KEY, this);
 
@@ -30,17 +33,16 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
       this._$element.addClass('dk-button');
     }
   };
+  Button.prototype = Object.create(HandlerCollection.prototype);
+  Button.prototype.constructor = Button;
 
 
   // addClickHandler registers a function to handle click events on the button.
+  //
   // Arguments:
   //   handler: Function that takes a boolean argument, whether the button is
   //       active (toggled) or not.
-  Button.prototype.addClickHandler = function (handler) {
-    if (this._onClickHandlers.indexOf(handler) === -1) {
-      this._onClickHandlers.push(handler);
-    }
-  };
+  Button.prototype.addClickHandler = Button.prototype._addHandler;
 
 
   // addStateHandler is an alias for addClickHandler
@@ -56,9 +58,9 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
 
   // destroy removes all callback handlers from the element
   Button.prototype.destroy = function () {
-    this._$element.unbind('mousedown', this._handlers.mousePress);
-    this._$element.unbind('mouseup', this._handlers.mouseRelease);
-    this._$element.unbind('mouseleave', this._handlers.mouseLeave);
+    this._$element.unbind('mousedown', this._interactionHandlers.mousePress);
+    this._$element.unbind('mouseup', this._interactionHandlers.mouseRelease);
+    this._$element.unbind('mouseleave', this._interactionHandlers.mouseLeave);
 
     this._$element.data(_DATA_FIELD_KEY, null);
   };
@@ -107,10 +109,7 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
     }
 
     this._mouseDown = false;
-
-    for (var i = 0; i < this._onClickHandlers.length; i++) {
-      this._onClickHandlers[i](this._toggled);
-    }
+    this._callHandlers(this._toggled);
   };
 
 
@@ -156,11 +155,7 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
   // Arguments:
   //   handler: Function that takes a boolean argument, whether the button is
   //       active (toggled) or not.
-  Button.prototype.removeClickHandler = function (handler) {
-    var handlerIndex = this._onClickHandlers.indexOf(handler);
-    if (handlerIndex === -1) return;
-    this._onClickHandlers.splice(handlerIndex, 1);
-  };
+  Button.prototype.removeClickHandler = Button.prototype._removeHandler;
 
 
   // removeStateHandler is an alias for removeClickHandler

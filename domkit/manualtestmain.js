@@ -46,6 +46,11 @@ require(['jquery', 'domkit/controllers/radiogroup', 'domkit/ui/palette',
       isVisible: false,
       anchorEdgeBounds: { min: 0, max: Infinity }
     });
+    testPalettes[0].addVisibleStateHandler(function (isVisible) {
+      if (isVisible) console.log('Palette 0 is visible.');
+      else console.log('Palette 0 is not visible.');
+    });
+
     testPalettes[1] = new Palette({
       sibling: '#test-radio-1',
       menu: '#test-menu',
@@ -53,12 +58,21 @@ require(['jquery', 'domkit/controllers/radiogroup', 'domkit/ui/palette',
       isVisible: false,
       anchorEdgeBounds: { min: 0, max: Infinity }
     });
+    testPalettes[1].addVisibleStateHandler(function (isVisible) {
+      if (isVisible) console.log('Palette 1 is visible.');
+      else console.log('Palette 1 is not visible.');
+    });
+
     testPalettes[2] = new Palette({
       sibling: '#test-radio-2',
       menu: $('<div/>', { 'class': 'placeholder' }),
       anchorEdge: Palette.ANCHOR_EDGES.BOTTOM,
       isVisible: false,
       anchorEdgeBounds: { min: 0, max: Infinity }
+    });
+    testPalettes[2].addVisibleStateHandler(function (isVisible) {
+      if (isVisible) console.log('Palette 2 is visible.');
+      else console.log('Palette 2 is not visible.');
     });
 
 
