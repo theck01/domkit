@@ -50,6 +50,10 @@ require(['jquery', 'domkit/controllers/radiogroup', 'domkit/ui/palette',
       if (isVisible) console.log('Palette 0 is visible.');
       else console.log('Palette 0 is not visible.');
     });
+    testPalettes[0].addDelayedVisibleStateHandler(function (isVisible) {
+      if (isVisible) console.log('Palette 0 is now visible.');
+      else console.log('Palette 0 is now not visible.');
+    });
 
     testPalettes[1] = new Palette({
       sibling: '#test-radio-1',
@@ -62,6 +66,10 @@ require(['jquery', 'domkit/controllers/radiogroup', 'domkit/ui/palette',
       if (isVisible) console.log('Palette 1 is visible.');
       else console.log('Palette 1 is not visible.');
     });
+    testPalettes[1].addDelayedVisibleStateHandler(function (isVisible) {
+      if (isVisible) console.log('Palette 1 is now visible.');
+      else console.log('Palette 1 is now not visible.');
+    });
 
     testPalettes[2] = new Palette({
       sibling: '#test-radio-2',
@@ -73,6 +81,10 @@ require(['jquery', 'domkit/controllers/radiogroup', 'domkit/ui/palette',
     testPalettes[2].addVisibleStateHandler(function (isVisible) {
       if (isVisible) console.log('Palette 2 is visible.');
       else console.log('Palette 2 is not visible.');
+    });
+    testPalettes[2].addDelayedVisibleStateHandler(function (isVisible) {
+      if (isVisible) console.log('Palette 2 is now visible.');
+      else console.log('Palette 2 is now not visible.');
     });
 
 

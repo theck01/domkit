@@ -19,8 +19,6 @@ define(
   //         The space in which the anchor edge can exist, must be larger than
   //         that edge of the palette or an error will be thrown.
   var Palette = function (params) {
-    HandlerCollection.call(this);
-
     this._anchorBorderOffset = { x: 0, y: 0 };
     this._anchorEdge = _OPPOSITE_ANCHOR_EDGES[params.anchorEdge];
     this._anchorEdgeBounds = params.anchorEdgeBounds || {
@@ -44,7 +42,16 @@ define(
       paletteDimensions: null
     };
     this._$sibling = Domkit.validateOrRetrieveJQueryObject(params.sibling);
-    this._visibleStateHandlers = [];
+    this._visibleStateHandlers = new HandlerCollection();
+    this._delayedVisibleStateHandlers = new HandlerCollection();
+
+    var callDelayedHandlers = function (isVisible) {
+      setTimeout(
+          this._delayedVisibleStateHandlers._callHandlers.bind(
+              this._delayedVisibleStateHandlers, isVisible),
+          _PALETTE_TRANSITION_DURATION);
+    };
+    this._visibleStateHandlers._addHandler(callDelayedHandlers.bind(this));
 
     this._anchorPosition = this._calculateAnchorPosistion();
     this._$menu = Domkit.validateOrRetrieveJQueryObject(params.menu);
@@ -65,8 +72,6 @@ define(
     if (this._isVisible) this._updateDOM();
     else this._hideDOM();
   };
-  Palette.prototype = Object.create(HandlerCollection.prototype);
-  Palette.prototype.constructor = Palette;
 
 
   // ANCHOR_EDGES enumeration of the edge which can be anchored to 
@@ -115,6 +120,9 @@ define(
   // CSS class for show transition
   var _PALETTE_SHOW_CLASS = 'dk-palette-appear-transition';
 
+  // Duration of palette show/hide transition
+  var _PALETTE_TRANSITION_DURATION = 450;
+
 
   // addVisibleStateHandler registers a function to handle visibility changes
   // of the palette.
@@ -122,7 +130,21 @@ define(
   // Arguments:
   //   handler: Function that takes a boolean argument, whether the palette is
   //       visible.
-  Palette.prototype.addVisibleStateHandler = Palette.prototype._addHandler;
+  Palette.prototype.addVisibleStateHandler = function (handler) {
+    this._visibleStateHandlers._addHandler(handler); 
+  };
+
+
+  // addDelayedVisibleStateHandler registers a function to handle visibility
+  // changes of the palette after the palette has transitioned to the new
+  // visibility state.
+  //
+  // Arguments:
+  //   handler: Function that takes a boolean argument, whether the palette is
+  //       visible.
+  Palette.prototype.addDelayedVisibleStateHandler = function (handler) {
+    this._delayedVisibleStateHandlers._addHandler(handler); 
+  };
 
 
   // _changeMenuElementsVisibility updates the elements in the tree starting
@@ -314,7 +336,20 @@ define(
   // Arguments:
   //   handler: Function that takes a boolean argument, whether the palette is
   //       visible.
-  Palette.prototype.removeVisibleStateHandler = Palette.prototype._removeHandler;
+  Palette.prototype.removeVisibleStateHandler = function (handler) {
+    this._visibleStateHandlers._removeHandler(handler); 
+  };
+
+  // removeDelayedVisibleStateHandler removes a function should no longer
+  // handle visibility changes of the palette after the palette has transitioned
+  // to the new visibility state.
+  //
+  // Arguments:
+  //   handler: Function that takes a boolean argument, whether the palette is
+  //       visible.
+  Palette.prototype.removeDelayedVisibleStateHandler = function (handler) {
+    this._delayedVisibleStateHandlers._addHandler(handler); 
+  };
 
 
   // _updateAnchorOffsets updates the offset for the palette anchor and palette
@@ -494,7 +529,7 @@ define(
       this._hideDOM();
       this._isVisible = false;
     }
-    this._callHandlers(isVisible);
+    this._visibleStateHandlers._callHandlers(isVisible);
   };
 
 
