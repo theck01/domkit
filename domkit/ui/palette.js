@@ -53,7 +53,7 @@ define(
     };
     this._visibleStateHandlers._addHandler(callDelayedHandlers.bind(this));
 
-    this._anchorPosition = this._calculateAnchorPosistion();
+    this._anchorPosition = this._calculateAnchorPosition();
     this._$menu = Domkit.validateOrRetrieveJQueryObject(params.menu);
     if (this._$menu.parent().length > 0) this._$menu.detach();
 
@@ -65,6 +65,8 @@ define(
       width: this._$menu.outerWidth(true /* include margins */),
       height: this._$menu.outerHeight(true /* include margins */)
     };
+
+    $(window).bind('resize', this._onWindowResize.bind(this));
 
     this._initializeSizings();
     this._updateAnchorOffsets();
@@ -188,7 +190,7 @@ define(
   // _calculateAnchorPosition calculates the anchor position of the palette so
   // that the palette is attached to the appropriate edge of the sibling
   // element.
-  Palette.prototype._calculateAnchorPosistion = function () {
+  Palette.prototype._calculateAnchorPosition = function () {
     var siblingPosition = this._$sibling.position();
     var position = { x: siblingPosition.left, y: siblingPosition.top };
 
@@ -233,6 +235,11 @@ define(
   // _hideDOM collapses palette to the anchor origin point, hiding the contents
   // from view
   Palette.prototype._hideDOM = function () {
+    // Ensure that the positions of the DOM are as up to date as possible.
+    this._anchorPosition = this._calculateAnchorPosition();
+    this._updateAnchorOffsets();
+    this._updatePaletteOffset();
+
     var hiddenPaletteProperties = {
       'top': this._anchorPosition.y,
       'left': this._anchorPosition.x,
@@ -248,6 +255,12 @@ define(
       'border-width': 0,
       'padding': 0
     };
+
+    // Ensure that the palette has transition classes, which may have been
+    // removed while shifting the palette within the window.
+    this._domCache.palette.addClass('dk-palette-appear-transition');
+    this._domCache.paletteAnchor.addClass('dk-palette-appear-transition');
+    this._domCache.paletteAnchorBorder.addClass('dk-palette-appear-transition');
 
     this._domCache.palette.css(hiddenPaletteProperties);
     this._domCache.paletteAnchor.css(hiddenComponentProperties);
@@ -330,6 +343,17 @@ define(
   };
 
 
+  // _onWindowResize handles updating palette elements to ensure that the
+  // palette is properly positioned within the window and attached to the
+  // element.
+  Palette.prototype._onWindowResize = function () {
+    this._anchorPosition = this._calculateAnchorPosition();
+    this._updateAnchorOffsets();
+    this._updatePaletteOffset();
+    this._shiftDOM();
+  };
+
+
   // removeVisibleStateHandler removes a function should no longer handle
   // visibility changes of the palette.
   //
@@ -349,6 +373,32 @@ define(
   //       visible.
   Palette.prototype.removeDelayedVisibleStateHandler = function (handler) {
     this._delayedVisibleStateHandlers._addHandler(handler); 
+  };
+
+
+  // _shiftDOM shifts DOM elements to positions dictated by anchor offsets and
+  // palette offsets.
+  Palette.prototype._shiftDOM = function () {
+    this._domCache.palette.removeClass('dk-palette-appear-transition');
+    this._domCache.palette.css({
+      'top': this._paletteOffset.y,
+      'left': this._paletteOffset.x,
+    });
+
+    if (this._isVisible) {
+      this._domCache.paletteAnchor.removeClass('dk-palette-appear-transition');
+      this._domCache.paletteAnchor.css({
+        'top': this._anchorOffset.y - this._paletteOffset.y,
+        'left': this._anchorOffset.x - this._paletteOffset.x,
+      });
+
+      this._domCache.paletteAnchorBorder.removeClass(
+          'dk-palette-appear-transition');
+      this._domCache.paletteAnchorBorder.css({
+        'top': this._anchorBorderOffset.y - this._paletteOffset.y,
+        'left': this._anchorBorderOffset.x - this._paletteOffset.x,
+      });
+    }
   };
 
 
@@ -407,6 +457,17 @@ define(
   // _updateDOM applies the current palette state to the DOM elements that
   // make up the palette.
   Palette.prototype._updateDOM = function () {
+    // Ensure that the positions of the DOM are as up to date as possible.
+    this._anchorPosition = this._calculateAnchorPosition();
+    this._updateAnchorOffsets();
+    this._updatePaletteOffset();
+
+    // Ensure that the palette has transition classes, which may have been
+    // removed while shifting the palette within the window.
+    this._domCache.palette.addClass('dk-palette-appear-transition');
+    this._domCache.paletteAnchor.addClass('dk-palette-appear-transition');
+    this._domCache.paletteAnchorBorder.addClass('dk-palette-appear-transition');
+
     this._domCache.palette.css({
       'top': this._paletteOffset.y,
       'left': this._paletteOffset.x,

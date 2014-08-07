@@ -88,12 +88,12 @@ require(['jquery', 'domkit/controllers/radiogroup', 'domkit/ui/palette',
     });
 
 
-    paletteOrientationTest = new Palette({
+    window.paletteOrientationTest = new Palette({
       sibling: '#test-div',
       menu: $('<div/>', { 'class': 'placeholder' }),
       anchorEdge: Palette.ANCHOR_EDGES.RIGHT,
       isVisible: true,
-      anchorEdgeBounds: { min: 0, max: Infinity }
+      anchorEdgeBounds: { min: 0, max: 420 }
     });
 
     $('#test-menu').children('button').each(function () {
