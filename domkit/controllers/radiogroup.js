@@ -6,10 +6,20 @@ define([], function () {
   //   elements: An array of toggleable element instances.
   //   opt_activeIndex: The index of the element within the elements array that
   //       should start as toggled.
-  var RadioGroup = function (elements, opt_activeIndex) {
+  //   opt_forceActiveElement: Whether to force the radio group to always have
+  //       an active element. If true then opt_activeIndex must be specified as
+  //       well.
+  var RadioGroup = function (
+      elements, opt_activeIndex, opt_forceActiveElement) {
     this._activeIndex = opt_activeIndex === undefined ? -1 : opt_activeIndex;
+    this._forceActiveElement = !!opt_forceActiveElement;
     this._toggleableElements = [];
     this._toggleHandlers = this._generateHandlers(elements.length);
+
+    if (this._forceActiveElement && this._activeIndex === -1) {
+      throw Error('Cannot force a radio group to have an active element if ' +
+          'none of the elements should be active initially.');
+    }
 
     for (var i = 0; i < elements.length; i++) {
       this._assertElementIsToggleable(elements[i]);
@@ -46,7 +56,7 @@ define([], function () {
 
   // clear the active element in the radio group, if one exists.
   RadioGroup.prototype.clear = function () {
-    if (this._activeIndex < 0) return;
+    if (this._activeIndex < 0 || this._forceActiveElement) return;
     this._toggleableElements[this._activeIndex].setState(false);
   };
 
@@ -99,15 +109,19 @@ define([], function () {
   //   state: The state of the element after the change.
   RadioGroup.prototype._handleStateChange = function (elementIndex, state) {
     if (this._activeIndex === elementIndex) {
-      if (!state) this._activeIndex = -1;
+      if (!state) {
+        if (!this._forceActiveElement) this._activeIndex = -1;
+        else this._toggleableElements[this._activeIndex].setState(true);
+      }
       return;
     }
 
     if (state) {
-      if (this._activeIndex >= 0) {
-        this._toggleableElements[this._activeIndex].setState(false);
-      }
+      var originalActiveIndex = this._activeIndex;
       this._activeIndex = elementIndex;
+      if (originalActiveIndex >= 0) {
+        this._toggleableElements[originalActiveIndex].setState(false);
+      }
     }
   };
   

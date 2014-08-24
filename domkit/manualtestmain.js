@@ -96,8 +96,10 @@ require(['jquery', 'domkit/controllers/radiogroup', 'domkit/ui/palette',
       anchorEdgeBounds: { min: 0, max: 420 }
     });
 
+    var testMenuButtons = [];
     $('#test-menu').children('button').each(function () {
-      Button.create($(this));
+      testMenuButtons.push(Button.create($(this)));
     });
+    var forcedActiveRadio = new RadioGroup(testMenuButtons, 0, true);
   });
 });
