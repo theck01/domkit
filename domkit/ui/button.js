@@ -174,11 +174,25 @@ define(
   // already exists then the instance is returned, if not then a new instance
   // is returned.
   // Arguments:
-  //   domID: A CSS style id selector.
-  Button.create = function (domID) {
-    var $element = $(domID);
+  //   jQueryOrDomID: A CSS style id selector or jQuery object.
+  Button.create = function (jQueryOrDomID) {
+    var $element = Domkit.validateOrRetrieveJQueryObject(jQueryOrDomID);
     var buttonInstance = $element.data(_DATA_FIELD_KEY);
-    return buttonInstance ? buttonInstance : new Button(domID);
+    return buttonInstance ? buttonInstance : new Button($element);
+  };
+
+
+  // createAll initializes all buttons in the document as domkit buttons.
+  Button.createAll = function () {
+    $('.dk-button').each(function () {
+      Button.create($(this));
+    });
+    $('.dk-toggleable-button').each(function () {
+      Button.create($(this));
+    });
+    $('.dk-toggleable-button-active').each(function () {
+      Button.create($(this));
+    });
   };
 
   

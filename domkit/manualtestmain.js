@@ -10,6 +10,8 @@ require(['jquery', 'domkit/controllers/radiogroup', 'domkit/ui/palette',
     'domkit/ui/button'],
     function($, RadioGroup, Palette, Button) {
   $(function () {
+    Button.createAll();
+
     var regularButton = Button.create('#test-button');
     regularButton.addClickHandler(function () {
       console.log('Button clicked.');
