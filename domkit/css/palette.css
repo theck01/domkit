@@ -1,3 +1,4 @@
+::-moz-focus-inner{border:none}
 .dk-palette-disappear-transition{transition:width .3s cubic-bezier(.645, .045, .355, 1),height .3s cubic-bezier(.645, .045, .355, 1),top .3s cubic-bezier(.645, .045, .355, 1),left .3s cubic-bezier(.645, .045, .355, 1),border-width .3s cubic-bezier(.645, .045, .355, 1),padding .3s cubic-bezier(.645, .045, .355, 1),opacity .15s cubic-bezier(.645, .045, .355, 1),font-size .15s cubic-bezier(.645, .045, .355, 1)}
 .dk-palette-appear-transition{transition:width .3s cubic-bezier(.645, .045, .355, 1),height .3s cubic-bezier(.645, .045, .355, 1),top .3s cubic-bezier(.645, .045, .355, 1),left .3s cubic-bezier(.645, .045, .355, 1),border-width .3s cubic-bezier(.645, .045, .355, 1),padding .3s cubic-bezier(.645, .045, .355, 1),opacity .45s cubic-bezier(.645, .045, .355, 1),font-size .3s cubic-bezier(.645, .045, .355, 1)}
 .dk-palette{position:absolute}

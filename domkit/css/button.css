@@ -1,3 +1,4 @@
+::-moz-focus-inner{border:none}
 .dk-button{outline:none;border-radius:8px;border:1px solid #9f9f9f;background:linear-gradient(to bottom, #f0f0f0 0, #e7e7e7 100%)}
 .dk-button:hover{box-shadow:0 1px 2px 0 rgba(0,0,0,0.5)}
 .dk-toggleable-button{outline:none;border-radius:8px;border:1px solid #9f9f9f;background:linear-gradient(to bottom, #f0f0f0 0, #e7e7e7 100%)}
