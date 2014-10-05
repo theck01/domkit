@@ -319,11 +319,11 @@ define(
     this._sizingCache.anchorHeight = parseInt(
         this._domCache.paletteAnchor.css(borderWidthProperty), 10);
     this._sizingCache.borderWidth = parseInt(
-        this._domCache.paletteMenuContainer.css('border-width'), 10);
+        this._domCache.paletteMenuContainer.css('border-top-width'), 10);
     this._sizingCache.innerAnchorOffset =
         Math.floor(this._sizingCache.borderWidth * Math.sqrt(2)) + 1;
     this._sizingCache.menuContainerPadding = parseInt(
-        this._domCache.paletteMenuContainer.css('padding'), 10);
+        this._domCache.paletteMenuContainer.css('padding-top'), 10);
 
     this._sizingCache.paletteDimensions = {
       width:
