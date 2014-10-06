@@ -66,8 +66,6 @@ define(
       height: this._$menu.outerHeight(true /* include margins */)
     };
 
-    $(window).bind('resize', this._onWindowResize.bind(this));
-
     this._initializeSizings();
     this._updateAnchorOffsets();
     this._updatePaletteOffset();
@@ -343,10 +341,10 @@ define(
   };
 
 
-  // _onWindowResize handles updating palette elements to ensure that the
+  // refreshPosition handles updating palette elements to ensure that the
   // palette is properly positioned within the window and attached to the
   // element.
-  Palette.prototype._onWindowResize = function () {
+  Palette.prototype.refreshPosition = function () {
     this._anchorPosition = this._calculateAnchorPosition();
     this._updateAnchorOffsets();
     this._updatePaletteOffset();
