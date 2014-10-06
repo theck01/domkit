@@ -523,7 +523,8 @@ define(
 
   // _updatePaletteOffset updates the offset for the menu container
   // child of the palette, attempting to keep the container within the
-  // constrained edge bounds. Throws an error if constraints cannot be obeyed.
+  // constrained edge bounds. Simply centers the palette if constraints cannot
+  // be obeyed.
   Palette.prototype._updatePaletteOffset = function () {
     var constrainedDimension =
         this._anchorEdge === Palette.ANCHOR_EDGES.TOP ||
@@ -536,26 +537,41 @@ define(
         constrainedDimension === 'x' ? 'height' : 'width';
 
     var paletteDimensions = this._sizingCache.paletteDimensions;
-    var constrainedRange = {
+    var originalRange = {
       min: this._anchorPosition[constrainedDimension] -
           Math.floor(paletteDimensions[constrainedDimensionProperty] / 2),
       max: this._anchorPosition[constrainedDimension] +
           Math.ceil(paletteDimensions[constrainedDimensionProperty] / 2)
     };
+    var connectionBoundingRange = {
+      min: this._anchorPosition[constrainedDimension] -
+          paletteDimensions[constrainedDimensionProperty] +
+          Math.floor(this._sizingCache.anchorHeight / 2),
+      max: this._anchorPosition[constrainedDimension] +
+          paletteDimensions[constrainedDimensionProperty] -
+          Math.ceil(this._sizingCache.anchorHeight / 2)
+    };
+    var boundingRange = {
+      min: Math.max(connectionBoundingRange.min, this._anchorEdgeBounds.min),
+      max: Math.min(connectionBoundingRange.max, this._anchorEdgeBounds.max)
+    };
+    var constrainedRange = _.clone(originalRange);
 
-    var lowerOffset = constrainedRange.min < this._anchorEdgeBounds.min ?
-        this._anchorEdgeBounds.min - constrainedRange.min : 0;
+    var lowerOffset = constrainedRange.min < boundingRange.min ?
+        boundingRange.min - constrainedRange.min : 0;
     constrainedRange.min += lowerOffset;
     constrainedRange.max += lowerOffset;
 
-    var higherOffset = constrainedRange.max > this._anchorEdgeBounds.max ?
-        this._anchorEdgeBounds.max - constrainedRange.max : 0;
+    var higherOffset = constrainedRange.max > boundingRange.max ?
+        boundingRange.max - constrainedRange.max : 0;
     constrainedRange.min += higherOffset;
     constrainedRange.max += higherOffset;
 
-    if (constrainedRange.min < this._anchorEdgeBounds.min ||
-        constrainedRange.max > this._anchorEdgeBounds.max) {
-      throw Error('Cannot find location for palette in constrained dimension.');
+    // If the menu cannot fit within the constraint bounds then just center the
+    // menu to the sibling's median.
+    if (constrainedRange.min < boundingRange.min ||
+        constrainedRange.max > boundingRange.max) {
+      constrainedRange = _.clone(originalRange);
     }
 
     this._paletteOffset[constrainedDimension] = constrainedRange.min;
