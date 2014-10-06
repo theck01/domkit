@@ -191,7 +191,7 @@ define(
   // that the palette is attached to the appropriate edge of the sibling
   // element.
   Palette.prototype._calculateAnchorPosition = function () {
-    var siblingPosition = this._$sibling.position();
+    var siblingPosition = this._$sibling.offset();
     var position = { x: siblingPosition.left, y: siblingPosition.top };
 
     switch (this._anchorEdge) {
@@ -277,13 +277,13 @@ define(
   // which cannot be accurately determined before the menu has been added to
   // the DOM
   Palette.prototype._initializeDOM = function () {
-    var $parentElement = this._$sibling.parent();
+    var $body = $('body');
 
     this._domCache.palette = $('<div/>', {
       'class': 'dk-palette dk-palette-appear-transition'
     });
     if (!this._isVisible) this._domCache.palette.hide();
-    $parentElement.append(this._domCache.palette);
+    $body.append(this._domCache.palette);
 
     this._domCache.paletteMenuContainer = $('<div/>', {
       'class': 'dk-palette-menu-container dk-palette-appear-transition',
