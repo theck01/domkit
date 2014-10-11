@@ -11,6 +11,7 @@ define(
   var Button = function (jQueryOrDomID) {
     HandlerCollection.call(this);
 
+    this._disabled = false;
     this._$element = Domkit.validateOrRetrieveJQueryObject(jQueryOrDomID);
     this._toggleable = this._$element.hasClass('dk-toggleable-button') ||
         this._$element.hasClass('dk-toggleable-button-active');
@@ -66,6 +67,22 @@ define(
   };
 
 
+  // disable button, preventing all events from triggering and updating button
+  // styling.
+  Button.prototype.disable = function () {
+    this._$element.addClass('dk-disabled');
+    this._disabled = true;
+  };
+
+
+  // enable button, resuming processing all events and updating button
+  // styling.
+  Button.prototype.enable = function () {
+    this._$element.removeClass('dk-disabled');
+    this._disabled = false;
+  };
+
+
   // getState returns whether the button is active or not.
   Button.prototype.getState = function () {
     return this._toggleable && this._toggled;
@@ -74,6 +91,8 @@ define(
 
   // _handlePress mousedown handler
   Button.prototype._handlePress = function () {
+    if (this._disabled) return;
+
     if (this._toggleable) {
       if (this._toggled) {
         this._$element.addClass('dk-toggleable-button-active-pressed');
@@ -93,6 +112,8 @@ define(
 
   // _handleRelease mouseup handler
   Button.prototype._handleRelease = function () {
+    if (this._disabled) return;
+
     if (this._toggleable) {
       this._toggled = !this._toggled;
 
@@ -115,6 +136,8 @@ define(
 
   // _handleLeave mouseleave handler
   Button.prototype._handleLeave = function () {
+    if (this._disabled) return;
+
     if (this._mouseDown) {
       if (this._toggleable) {
         if (this._toggled) {

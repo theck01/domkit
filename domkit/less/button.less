@@ -7,52 +7,15 @@
 @button-click-gradient: linear-gradient(to bottom, #E7E7E7 0%, #F0F0F0 100%);
 
 
-// PRIVATE MIXINS
-
-
-.common-style() {
+.dk-button {
   outline: none;
   border-radius: @domkit-border-radius;
-}
-
-
-.default-border() {
-  border: @domkit-border-width solid @domkit-border-color
-}
-
-
-.active-border() {
-  border: @active-button-border-width solid @active-button-border-color;
-}
-
-
-.not-clicked() {
+  border: @domkit-border-width solid @domkit-border-color;
   background: @button-noclick-gradient;
 }
 
-
-.clicked() {
-  background: @button-click-gradient;
-}
-
-
-.hover-shadow() {
+.dk-button:hover:not(.dk-disabled) {
   box-shadow: @domkit-hover-shadow;
-}
-
-
-
-// EXPORTED CLASSES
-
-
-.dk-button {
-  .common-style;
-  .default-border;
-  .not-clicked;
-}
-
-.dk-button:hover {
-  .hover-shadow;
 }
 
 
@@ -60,26 +23,28 @@
   .dk-button;
 }
 
-.dk-toggleable-button:hover {
-  .hover-shadow;
+.dk-toggleable-button:hover:not(.dk-disabled) {
+  box-shadow: @domkit-hover-shadow;
 }
 
 
 .dk-toggleable-button-active {
-  .common-style;
-  .active-border;
-  .not-clicked;
+  outline: none;
+  border-radius: @domkit-border-radius;
+  border: @active-button-border-width solid @active-button-border-color;
+  background: @button-noclick-gradient;
 }
 
-.dk-toggleable-button-active:hover {
-  .hover-shadow;
+.dk-toggleable-button-active:hover:not(.dk-disabled) {
+  box-shadow: @domkit-hover-shadow;
 }
 
 
 .dk-button-pressed {
-  .common-style;
-  .default-border;
-  .clicked;
+  outline: none;
+  border-radius: @domkit-border-radius;
+  border: @domkit-border-width solid @domkit-border-color;
+  background: @button-click-gradient;
 }
 
 
@@ -89,7 +54,8 @@
 
 
 .dk-toggleable-button-active-pressed {
-  .common-style;
-  .active-border;
-  .clicked;
+  outline: none;
+  border-radius: @domkit-border-radius;
+  border: @active-button-border-width solid @active-button-border-color;
+  background: @button-click-gradient;
 }

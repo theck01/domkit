@@ -6,16 +6,16 @@ require.config({
 });
 
 
-require(['jquery', 'domkit/controllers/radiogroup', 'domkit/ui/palette',
-    'domkit/ui/button'],
-    function($, RadioGroup, Palette, Button) {
+require(
+    ['jquery', 'domkit/controllers/radiogroup', 'domkit/ui/palette',
+    'domkit/ui/button', 'domkit/ui/tooltip'],
+    function($, RadioGroup, Palette, Button, Tooltip) {
   $(function () {
     Button.createAll();
+    Tooltip.createAll(1000);
 
     var regularButton = Button.create('#test-button');
-    regularButton.addClickHandler(function () {
-      console.log('Button clicked.');
-    });
+    regularButton.disable();
 
     var testPalettes = [];
     var radioButtons = [];

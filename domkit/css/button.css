@@ -1,10 +1,10 @@
 ::-moz-focus-inner{border:none}
 .dk-button{outline:none;border-radius:8px;border:1px solid #9f9f9f;background:linear-gradient(to bottom, #f0f0f0 0, #e7e7e7 100%)}
-.dk-button:hover{box-shadow:0 1px 2px 0 rgba(0,0,0,0.5)}
+.dk-button:hover:not(.dk-disabled){box-shadow:0 1px 2px 0 rgba(0,0,0,0.5)}
 .dk-toggleable-button{outline:none;border-radius:8px;border:1px solid #9f9f9f;background:linear-gradient(to bottom, #f0f0f0 0, #e7e7e7 100%)}
-.dk-toggleable-button:hover{box-shadow:0 1px 2px 0 rgba(0,0,0,0.5)}
+.dk-toggleable-button:hover:not(.dk-disabled){box-shadow:0 1px 2px 0 rgba(0,0,0,0.5)}
 .dk-toggleable-button-active{outline:none;border-radius:8px;border:3px solid #6fb1ff;background:linear-gradient(to bottom, #f0f0f0 0, #e7e7e7 100%)}
-.dk-toggleable-button-active:hover{box-shadow:0 1px 2px 0 rgba(0,0,0,0.5)}
+.dk-toggleable-button-active:hover:not(.dk-disabled){box-shadow:0 1px 2px 0 rgba(0,0,0,0.5)}
 .dk-button-pressed{outline:none;border-radius:8px;border:1px solid #9f9f9f;background:linear-gradient(to bottom, #e7e7e7 0, #f0f0f0 100%)}
 .dk-toggleable-button-pressed{outline:none;border-radius:8px;border:1px solid #9f9f9f;background:linear-gradient(to bottom, #e7e7e7 0, #f0f0f0 100%)}
 .dk-toggleable-button-active-pressed{outline:none;border-radius:8px;border:3px solid #6fb1ff;background:linear-gradient(to bottom, #e7e7e7 0, #f0f0f0 100%)}

@@ -1,3 +1,4 @@
+::-moz-focus-inner{border:none}
 .dk-palette-disappear-transition{transition:width .3s cubic-bezier(.645, .045, .355, 1),height .3s cubic-bezier(.645, .045, .355, 1),top .3s cubic-bezier(.645, .045, .355, 1),left .3s cubic-bezier(.645, .045, .355, 1),border-width .3s cubic-bezier(.645, .045, .355, 1),padding .3s cubic-bezier(.645, .045, .355, 1),opacity .15s cubic-bezier(.645, .045, .355, 1),font-size .15s cubic-bezier(.645, .045, .355, 1)}
 .dk-palette-appear-transition{transition:width .3s cubic-bezier(.645, .045, .355, 1),height .3s cubic-bezier(.645, .045, .355, 1),top .3s cubic-bezier(.645, .045, .355, 1),left .3s cubic-bezier(.645, .045, .355, 1),border-width .3s cubic-bezier(.645, .045, .355, 1),padding .3s cubic-bezier(.645, .045, .355, 1),opacity .45s cubic-bezier(.645, .045, .355, 1),font-size .3s cubic-bezier(.645, .045, .355, 1)}
 .dk-palette{position:absolute}
@@ -11,14 +12,15 @@
 .dk-palette-anchor-border-top{width:0;height:0;position:absolute;border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:20px solid #9f9f9f}
 .dk-palette-anchor-bottom{width:0;height:0;position:absolute;border-top:20px solid #f7f7f7;border-left:10px solid transparent;border-right:10px solid transparent}
 .dk-palette-anchor-border-bottom{width:0;height:0;position:absolute;border-top:20px solid #9f9f9f;border-left:10px solid transparent;border-right:10px solid transparent}
-::-moz-focus-inner{border:none}
 .dk-button{outline:none;border-radius:8px;border:1px solid #9f9f9f;background:linear-gradient(to bottom, #f0f0f0 0, #e7e7e7 100%)}
-.dk-button:hover{box-shadow:0 1px 2px 0 rgba(0,0,0,0.5)}
+.dk-button:hover:not(.dk-disabled){box-shadow:0 1px 2px 0 rgba(0,0,0,0.5)}
 .dk-toggleable-button{outline:none;border-radius:8px;border:1px solid #9f9f9f;background:linear-gradient(to bottom, #f0f0f0 0, #e7e7e7 100%)}
-.dk-toggleable-button:hover{box-shadow:0 1px 2px 0 rgba(0,0,0,0.5)}
+.dk-toggleable-button:hover:not(.dk-disabled){box-shadow:0 1px 2px 0 rgba(0,0,0,0.5)}
 .dk-toggleable-button-active{outline:none;border-radius:8px;border:3px solid #6fb1ff;background:linear-gradient(to bottom, #f0f0f0 0, #e7e7e7 100%)}
-.dk-toggleable-button-active:hover{box-shadow:0 1px 2px 0 rgba(0,0,0,0.5)}
+.dk-toggleable-button-active:hover:not(.dk-disabled){box-shadow:0 1px 2px 0 rgba(0,0,0,0.5)}
 .dk-button-pressed{outline:none;border-radius:8px;border:1px solid #9f9f9f;background:linear-gradient(to bottom, #e7e7e7 0, #f0f0f0 100%)}
 .dk-toggleable-button-pressed{outline:none;border-radius:8px;border:1px solid #9f9f9f;background:linear-gradient(to bottom, #e7e7e7 0, #f0f0f0 100%)}
 .dk-toggleable-button-active-pressed{outline:none;border-radius:8px;border:3px solid #6fb1ff;background:linear-gradient(to bottom, #e7e7e7 0, #f0f0f0 100%)}
+.dk-tooltip{position:absolute;background-color:#000;color:#fff;padding:5px;opacity:0;transition:opacity .3s cubic-bezier(.645, .045, .355, 1)}
+.dk-disabled{opacity:.5}
 .dk-spacer{width:10px;height:10px}
