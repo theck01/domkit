@@ -1,0 +1,12 @@
+@tooltip-transition-duration: 0.3s;
+@tooltip-transition-type: cubic-bezier(0.645, 0.045, 0.355, 1);
+@tooltip-padding: 5px;
+
+.dk-tooltip {
+  position: absolute;
+  background-color: #000000;
+  color: #FFFFFF;
+  padding: @tooltip-padding;
+  opacity: 0;
+  transition: opacity @tooltip-transition-duration @tooltip-transition-type;
+}

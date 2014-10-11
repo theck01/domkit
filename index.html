@@ -6,10 +6,22 @@
   </head>
   <body>
     <div id="test-palette"></div>
-    <button id="test-button">non-toggleable</button>
-    <button class="dk-button">test-batch-init-A</button>
-    <button class="dk-button">test-batch-init-B</button>
-    <button class="dk-button">test-batch-init-C</button>
+    <button id="test-button">
+      non-toggleable
+      <div class="dk-tooltip">Button that should not toggle</div>
+    </button>
+    <button class="dk-button">
+      test-batch-init-A
+      <div class="dk-tooltip">Button testing group init</div>
+    </button>
+    <button class="dk-button">
+      test-batch-init-B
+      <div class="dk-tooltip">Button testing group init</div>
+    </button>
+    <button class="dk-button">
+      test-batch-init-C
+      <div class="dk-tooltip">Button testing group init</div>
+    </button>
     <button id="test-radio-0" class="dk-toggleable-button">radio 1</button>
     <button id="test-radio-1" class="dk-toggleable-button">radio 2</button>
     <button id="test-radio-2" class="dk-toggleable-button">radio 3</button>
