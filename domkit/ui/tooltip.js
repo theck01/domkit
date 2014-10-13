@@ -21,7 +21,6 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
 
     this._boundMethods = Object.create(null);
     this._boundMethods.show = this._show.bind(this);
-    this._boundMethods.displayNone = this._displayNone.bind(this);
 
     this._interactionHandlers = Object.create(null);
     this._interactionHandlers.mouseEnter = this._handleEnter.bind(this);
@@ -49,13 +48,6 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
   };
 
 
-  // Set tooltip to display none.
-  Tooltip.prototype._displayNone = function () {
-    this._$tooltip.css('display', 'none');
-    this._timeoutCallbackId = null;
-  };
-
-
   // Handle mouseenter events
   Tooltip.prototype._handleEnter = function () {
     if (this._timeoutCallbackId !== null) {
@@ -73,9 +65,7 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
   // Hide the tooltip, and cancel any pending appearnces of the tooltip.
   Tooltip.prototype._hide = function () {
     this._cancelTimeout();
-    this._$tooltip.css('opacity', 0);
-    this._timeoutCallbackId = setTimeout(
-        this._boundMethods.displayNone, _TRANSITION_DURATION);
+    this._$tooltip.fadeOut(_TRANSITION_DURATION);
   };
 
 
@@ -89,12 +79,10 @@ define(['jquery', 'domkit/domkit'], function ($, Domkit) {
     var tooltipLeft = elementPosition.left + this._$element.width() / 2 +
           _OFFSET_FROM_CENTER;
 
-    var tooltipShowCSS = {
-      'top': tooltipTop, 'left': tooltipLeft, 'display': 'block',
-      'opacity': _SHOW_OPACITY
-    };
+    var tooltipShowCSS = {'top': tooltipTop, 'left': tooltipLeft };
 
     this._$tooltip.css(tooltipShowCSS);
+    this._$tooltip.fadeIn(_TRANSITION_DURATION);
   };
 
 
