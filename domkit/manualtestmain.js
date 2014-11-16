@@ -89,7 +89,7 @@ require(
       else console.log('Palette 2 is now not visible.');
     });
 
-
+    window.testButton = Button.create('#test-button');
     window.paletteOrientationTest = new Palette({
       sibling: '#test-div',
       menu: $('<div/>', { 'class': 'placeholder' }),

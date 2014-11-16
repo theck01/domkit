@@ -7,11 +7,18 @@
 @button-click-gradient: linear-gradient(to bottom, #E7E7E7 0%, #F0F0F0 100%);
 
 
+@button-opacity-transition-type: cubic-bezier(0.645, 0.045, 0.355, 1);
+@button-opacity-transition-duration: 0.3s;
+
+
 .dk-button {
   outline: none;
   border-radius: @domkit-border-radius;
   border: @domkit-border-width solid @domkit-border-color;
   background: @button-noclick-gradient;
+  transition:
+      opacity @button-opacity-transition-duration
+      @button-opacity-transition-type;
 }
 
 .dk-button:hover:not(.dk-disabled) {
@@ -21,6 +28,9 @@
 
 .dk-toggleable-button {
   .dk-button;
+  transition:
+      opacity @button-opacity-transition-duration
+      @button-opacity-transition-type;
 }
 
 .dk-toggleable-button:hover:not(.dk-disabled) {
@@ -33,6 +43,9 @@
   border-radius: @domkit-border-radius;
   border: @active-button-border-width solid @active-button-border-color;
   background: @button-noclick-gradient;
+  transition:
+      opacity @button-opacity-transition-duration
+      @button-opacity-transition-type;
 }
 
 .dk-toggleable-button-active:hover:not(.dk-disabled) {
@@ -45,6 +58,9 @@
   border-radius: @domkit-border-radius;
   border: @domkit-border-width solid @domkit-border-color;
   background: @button-click-gradient;
+  transition:
+      opacity @button-opacity-transition-duration
+      @button-opacity-transition-type;
 }
 
 
@@ -58,4 +74,7 @@
   border-radius: @domkit-border-radius;
   border: @active-button-border-width solid @active-button-border-color;
   background: @button-click-gradient;
+  transition:
+      opacity @button-opacity-transition-duration
+      @button-opacity-transition-type;
 }
