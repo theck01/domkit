@@ -1,11 +1,19 @@
 {
   "name": "domkit",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "homepage": "https://github.com/theck01/domkit",
   "authors": [
     "Tyler Heck <tyler.heck@gmail.com>"
   ],
   "description": "A set of reusable DOM based UI components.",
+  "main": [
+    "domkit/css/domkit.css",
+    "domkit/less/domkit.less",
+    "domkit/domkit.js",
+    "domkit/ui/button.js",
+    "domkit/ui/palette.js",
+    "domkit/ui/tooltip.js"
+  ],
   "keywords": [
     "domkit",
     "ui",

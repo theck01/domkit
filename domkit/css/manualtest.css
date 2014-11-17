@@ -1,4 +1,3 @@
-::-moz-focus-inner{border:none}
 .dk-palette-disappear-transition{transition:width .3s cubic-bezier(.645, .045, .355, 1),height .3s cubic-bezier(.645, .045, .355, 1),top .3s cubic-bezier(.645, .045, .355, 1),left .3s cubic-bezier(.645, .045, .355, 1),border-width .3s cubic-bezier(.645, .045, .355, 1),padding .3s cubic-bezier(.645, .045, .355, 1),opacity .15s cubic-bezier(.645, .045, .355, 1),font-size .15s cubic-bezier(.645, .045, .355, 1)}
 .dk-palette-appear-transition{transition:width .3s cubic-bezier(.645, .045, .355, 1),height .3s cubic-bezier(.645, .045, .355, 1),top .3s cubic-bezier(.645, .045, .355, 1),left .3s cubic-bezier(.645, .045, .355, 1),border-width .3s cubic-bezier(.645, .045, .355, 1),padding .3s cubic-bezier(.645, .045, .355, 1),opacity .45s cubic-bezier(.645, .045, .355, 1),font-size .3s cubic-bezier(.645, .045, .355, 1)}
 .dk-palette{position:absolute}
@@ -21,7 +20,8 @@
 .dk-button-pressed{outline:none;border-radius:8px;border:1px solid #9f9f9f;background:linear-gradient(to bottom, #e7e7e7 0, #f0f0f0 100%);transition:opacity .3s cubic-bezier(.645, .045, .355, 1)}
 .dk-toggleable-button-pressed{outline:none;border-radius:8px;border:1px solid #9f9f9f;background:linear-gradient(to bottom, #e7e7e7 0, #f0f0f0 100%);transition:opacity .3s cubic-bezier(.645, .045, .355, 1)}
 .dk-toggleable-button-active-pressed{outline:none;border-radius:8px;border:3px solid #6fb1ff;background:linear-gradient(to bottom, #e7e7e7 0, #f0f0f0 100%);transition:opacity .3s cubic-bezier(.645, .045, .355, 1)}
-.dk-tooltip{position:absolute;background-color:#000;color:#fff;padding:5px;display:none}
+.dk-tooltip{position:absolute;background-color:#000;color:#fff;padding:5px;display:none;pointer-events:none}
+::-moz-focus-inner{border:none}
 .dk-disabled{opacity:.5}
 .dk-spacer{width:10px;height:10px}
 .placeholder{width:200px;height:100px;background-color:#0ff}
