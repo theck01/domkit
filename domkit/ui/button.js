@@ -13,10 +13,12 @@ define(
 
     this._disabled = false;
     this._$element = Domkit.validateOrRetrieveJQueryObject(jQueryOrDomID);
+    this._isFlat = this._$element.hasClass('dk-flat-button') ||
+        this._$element.hasClass('dk-flat-toggleable-button');
     this._toggleable = this._$element.hasClass('dk-toggleable-button') ||
-        this._$element.hasClass('dk-toggleable-button-active');
+        this._$element.hasClass('dk-flat-toggleable-button');
     this._toggled = this._toggleable &&
-        this._$element.hasClass('dk-toggleable-button-active');
+        this._$element.hasClass('dk-active-button');
     this._interactionHandlers = Object.create(null);
     this._mouseDown = false;
 
@@ -92,20 +94,7 @@ define(
   // _handlePress mousedown handler
   Button.prototype._handlePress = function () {
     if (this._disabled) return;
-
-    if (this._toggleable) {
-      if (this._toggled) {
-        this._$element.addClass('dk-toggleable-button-active-pressed');
-        this._$element.removeClass('dk-toggleable-button-active');
-      } else {
-        this._$element.addClass('dk-toggleable-button-pressed');
-        this._$element.removeClass('dk-toggleable-button');
-      }
-    } else {
-      this._$element.addClass('dk-button-pressed');
-      this._$element.removeClass('dk-button');
-    }
-
+    this._$element.addClass('dk-pressed-button');
     this._mouseDown = true;
   };
 
@@ -117,17 +106,11 @@ define(
     if (this._toggleable) {
       this._toggled = !this._toggled;
 
-      if (this._toggled) {
-        this._$element.addClass('dk-toggleable-button-active');
-        this._$element.removeClass('dk-toggleable-button-pressed');
-      } else {
-        this._$element.addClass('dk-toggleable-button');
-        this._$element.removeClass('dk-toggleable-button-active-pressed');
-      }
-    } else {
-      this._$element.addClass('dk-button');
-      this._$element.removeClass('dk-button-pressed');
+      if (this._toggled) this._$element.addClass('dk-active-button');
+      else this._$element.removeClass('dk-active-button');
     }
+
+    this._$element.removeClass('dk-pressed-button');
 
     this._mouseDown = false;
     this._callHandlers(this._toggled);
@@ -137,22 +120,9 @@ define(
   // _handleLeave mouseleave handler
   Button.prototype._handleLeave = function () {
     if (this._disabled) return;
-
     if (this._mouseDown) {
-      if (this._toggleable) {
-        if (this._toggled) {
-          this._$element.addClass('dk-toggleable-button-active');
-          this._$element.removeClass('dk-toggleable-button-active-pressed');
-        } else {
-          this._$element.addClass('dk-toggleable-button');
-          this._$element.removeClass('dk-toggleable-button-pressed');
-        }
-      } else {
-        this._$element.addClass('dk-button');
-        this._$element.removeClass('dk-button-pressed');
-      }
+      this._$element.removeClass('dk-pressed-button');
     }
-
     this._mouseDown = false;
   };
 
@@ -161,8 +131,9 @@ define(
   // has a dk-button or related CSS class.
   Button.prototype._isDKButton = function () {
     return this._$element.hasClass('dk-button') ||
+      this._$element.hasClass('dk-flat-button') ||
       this._$element.hasClass('dk-toggleable-button') ||
-      this._$element.hasClass('dk-toggleable-button-active');
+      this._$element.hasClass('dk-flat-toggleable-button');
   };
 
 
@@ -210,10 +181,13 @@ define(
     $('.dk-button').each(function () {
       Button.create($(this));
     });
+    $('.dk-flat-button').each(function () {
+      Button.create($(this));
+    });
     $('.dk-toggleable-button').each(function () {
       Button.create($(this));
     });
-    $('.dk-toggleable-button-active').each(function () {
+    $('.dk-flat-toggleable-button').each(function () {
       Button.create($(this));
     });
   };

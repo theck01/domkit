@@ -6,75 +6,88 @@
 @button-noclick-gradient: linear-gradient(to bottom, #F0F0F0 0%, #E7E7E7 100%);
 @button-click-gradient: linear-gradient(to bottom, #E7E7E7 0%, #F0F0F0 100%);
 
+@flat-button-no-background: rgba(153, 153, 153, 0);
+@flat-button-inactive-hover-background: rgba(153, 153, 153, 0.2);
+@flat-button-active-background: rgba(153, 153, 153, 0.3);
+@flat-button-active-hover-background: rgba(153, 153, 153, 0.4);
+@flat-button-pressed-background: rgba(153, 153, 153, 0.5);
 
-@button-opacity-transition-type: cubic-bezier(0.645, 0.045, 0.355, 1);
+@button-transition-type: cubic-bezier(0.645, 0.045, 0.355, 1);
 @button-opacity-transition-duration: 0.3s;
+@button-background-color-transition-duration: 0.03333s;
+
+
+.dk-flat-button {
+  border: none;
+  background: none;
+  background-color: @flat-button-no-background;
+  outline: none;
+  transition:
+      opacity @button-opacity-transition-duration @button-transition-type,
+      background-color @button-background-color-transition-duration
+          @button-transition-type;
+}
 
 
 .dk-button {
-  outline: none;
   border-radius: @domkit-border-radius;
   border: @domkit-border-width solid @domkit-border-color;
   background: @button-noclick-gradient;
+  outline: none;
   transition:
-      opacity @button-opacity-transition-duration
-      @button-opacity-transition-type;
+      opacity @button-opacity-transition-duration @button-transition-type,
+      background-color @button-background-color-transition-duration
+          @button-transition-type;
 }
 
-.dk-button:hover:not(.dk-disabled) {
-  box-shadow: @domkit-hover-shadow;
+
+.dk-flat-toggleable-button {
+  .dk-flat-button;
 }
 
 
 .dk-toggleable-button {
   .dk-button;
-  transition:
-      opacity @button-opacity-transition-duration
-      @button-opacity-transition-type;
 }
 
-.dk-toggleable-button:hover:not(.dk-disabled) {
+
+.dk-active-button.dk-button,
+.dk-active-button.dk-toggleable-button {
+  border-radius: @domkit-border-radius;
+  border: @active-button-border-width solid @active-button-border-color;
+}
+
+
+.dk-active-button.dk-flat-button,
+.dk-active-button.dk-flat-toggleable-button {
+  background-color: @flat-button-active-background;
+}
+
+
+.dk-pressed-button.dk-button,
+.dk-pressed-button.dk-toggleable-button {
+  background: @button-click-gradient;
+}
+
+
+.dk-pressed-button.dk-flat-button,
+.dk-pressed-button.dk-flat-toggleable-button {
+  background-color: @flat-button-pressed-background;
+}
+
+
+.dk-button:hover:not(.dk-disabled):not(.dk-pressed-button),
+.dk-toggleable-button:hover:not(.dk-disabled):not(.dk-pressed-button) {
   box-shadow: @domkit-hover-shadow;
 }
 
 
-.dk-toggleable-button-active {
-  outline: none;
-  border-radius: @domkit-border-radius;
-  border: @active-button-border-width solid @active-button-border-color;
-  background: @button-noclick-gradient;
-  transition:
-      opacity @button-opacity-transition-duration
-      @button-opacity-transition-type;
-}
-
-.dk-toggleable-button-active:hover:not(.dk-disabled) {
-  box-shadow: @domkit-hover-shadow;
+.dk-flat-button:hover:not(.dk-disabled):not(.dk-pressed-button),
+.dk-flat-toggleable-button:hover:not(.dk-disabled):not(.dk-pressed-button):not(.dk-active-button) {
+  background-color: @flat-button-inactive-hover-background;
 }
 
 
-.dk-button-pressed {
-  outline: none;
-  border-radius: @domkit-border-radius;
-  border: @domkit-border-width solid @domkit-border-color;
-  background: @button-click-gradient;
-  transition:
-      opacity @button-opacity-transition-duration
-      @button-opacity-transition-type;
-}
-
-
-.dk-toggleable-button-pressed {
-  .dk-button-pressed;
-}
-
-
-.dk-toggleable-button-active-pressed {
-  outline: none;
-  border-radius: @domkit-border-radius;
-  border: @active-button-border-width solid @active-button-border-color;
-  background: @button-click-gradient;
-  transition:
-      opacity @button-opacity-transition-duration
-      @button-opacity-transition-type;
+.dk-flat-toggleable-button.dk-active-button:hover:not(.dk-disabled):not(.dk-pressed-button) {
+  background-color: @flat-button-active-hover-background;
 }

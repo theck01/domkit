@@ -11,15 +11,17 @@
 .dk-palette-anchor-border-top{width:0;height:0;position:absolute;border-left:10px solid transparent;border-right:10px solid transparent;border-bottom:20px solid #9f9f9f}
 .dk-palette-anchor-bottom{width:0;height:0;position:absolute;border-top:20px solid #f7f7f7;border-left:10px solid transparent;border-right:10px solid transparent}
 .dk-palette-anchor-border-bottom{width:0;height:0;position:absolute;border-top:20px solid #9f9f9f;border-left:10px solid transparent;border-right:10px solid transparent}
-.dk-button{outline:none;border-radius:8px;border:1px solid #9f9f9f;background:linear-gradient(to bottom, #f0f0f0 0, #e7e7e7 100%);transition:opacity .3s cubic-bezier(.645, .045, .355, 1)}
-.dk-button:hover:not(.dk-disabled){box-shadow:0 1px 2px 0 rgba(0,0,0,0.5)}
-.dk-toggleable-button{outline:none;border-radius:8px;border:1px solid #9f9f9f;background:linear-gradient(to bottom, #f0f0f0 0, #e7e7e7 100%);transition:opacity .3s cubic-bezier(.645, .045, .355, 1);transition:opacity .3s cubic-bezier(.645, .045, .355, 1)}
-.dk-toggleable-button:hover:not(.dk-disabled){box-shadow:0 1px 2px 0 rgba(0,0,0,0.5)}
-.dk-toggleable-button-active{outline:none;border-radius:8px;border:3px solid #6fb1ff;background:linear-gradient(to bottom, #f0f0f0 0, #e7e7e7 100%);transition:opacity .3s cubic-bezier(.645, .045, .355, 1)}
-.dk-toggleable-button-active:hover:not(.dk-disabled){box-shadow:0 1px 2px 0 rgba(0,0,0,0.5)}
-.dk-button-pressed{outline:none;border-radius:8px;border:1px solid #9f9f9f;background:linear-gradient(to bottom, #e7e7e7 0, #f0f0f0 100%);transition:opacity .3s cubic-bezier(.645, .045, .355, 1)}
-.dk-toggleable-button-pressed{outline:none;border-radius:8px;border:1px solid #9f9f9f;background:linear-gradient(to bottom, #e7e7e7 0, #f0f0f0 100%);transition:opacity .3s cubic-bezier(.645, .045, .355, 1)}
-.dk-toggleable-button-active-pressed{outline:none;border-radius:8px;border:3px solid #6fb1ff;background:linear-gradient(to bottom, #e7e7e7 0, #f0f0f0 100%);transition:opacity .3s cubic-bezier(.645, .045, .355, 1)}
+.dk-flat-button{border:none;background:none;background-color:rgba(153,153,153,0);outline:none;transition:opacity .3s cubic-bezier(.645, .045, .355, 1),background-color .03333s cubic-bezier(.645, .045, .355, 1)}
+.dk-button{border-radius:8px;border:1px solid #9f9f9f;background:linear-gradient(to bottom, #f0f0f0 0, #e7e7e7 100%);outline:none;transition:opacity .3s cubic-bezier(.645, .045, .355, 1),background-color .03333s cubic-bezier(.645, .045, .355, 1)}
+.dk-flat-toggleable-button{border:none;background:none;background-color:rgba(153,153,153,0);outline:none;transition:opacity .3s cubic-bezier(.645, .045, .355, 1),background-color .03333s cubic-bezier(.645, .045, .355, 1)}
+.dk-toggleable-button{border-radius:8px;border:1px solid #9f9f9f;background:linear-gradient(to bottom, #f0f0f0 0, #e7e7e7 100%);outline:none;transition:opacity .3s cubic-bezier(.645, .045, .355, 1),background-color .03333s cubic-bezier(.645, .045, .355, 1)}
+.dk-active-button.dk-button,.dk-active-button.dk-toggleable-button{border-radius:8px;border:3px solid #6fb1ff}
+.dk-active-button.dk-flat-button,.dk-active-button.dk-flat-toggleable-button{background-color:rgba(153,153,153,0.3)}
+.dk-pressed-button.dk-button,.dk-pressed-button.dk-toggleable-button{background:linear-gradient(to bottom, #e7e7e7 0, #f0f0f0 100%)}
+.dk-pressed-button.dk-flat-button,.dk-pressed-button.dk-flat-toggleable-button{background-color:rgba(153,153,153,0.5)}
+.dk-button:hover:not(.dk-disabled):not(.dk-pressed-button),.dk-toggleable-button:hover:not(.dk-disabled):not(.dk-pressed-button){box-shadow:0 1px 2px 0 rgba(0,0,0,0.5)}
+.dk-flat-button:hover:not(.dk-disabled):not(.dk-pressed-button),.dk-flat-toggleable-button:hover:not(.dk-disabled):not(.dk-pressed-button):not(.dk-active-button){background-color:rgba(153,153,153,0.2)}
+.dk-flat-toggleable-button.dk-active-button:hover:not(.dk-disabled):not(.dk-pressed-button){background-color:rgba(153,153,153,0.4)}
 .dk-tooltip{position:absolute;background-color:#000;color:#fff;padding:5px;display:none;pointer-events:none}
 ::-moz-focus-inner{border:none}
 .dk-disabled{opacity:.5}
