@@ -1,6 +1,7 @@
 define(
-    ['jquery', 'domkit/domkit', 'domkit/util/handlercollection'],
-    function ($, Domkit, HandlerCollection) {
+    ['jquery', 'domkit/domkit', 'domkit/util/handlercollection',
+     'domkit/util/touchclickcanceller'],
+    function ($, Domkit, HandlerCollection, TouchClickCanceller) {
 
   var _DATA_FIELD_KEY = '_data_dk_button_object';
 
@@ -11,8 +12,9 @@ define(
   var Button = function (jQueryOrDomID) {
     HandlerCollection.call(this);
 
-    this._disabled = false;
     this._$element = Domkit.validateOrRetrieveJQueryObject(jQueryOrDomID);
+    this._canceller = new TouchClickCanceller(this._$element);
+    this._disabled = false;
     this._isFlat = this._$element.hasClass('dk-flat-button') ||
         this._$element.hasClass('dk-flat-toggleable-button');
     this._toggleable = this._$element.hasClass('dk-toggleable-button') ||
@@ -20,15 +22,21 @@ define(
     this._toggled = this._toggleable &&
         this._$element.hasClass('dk-active-button');
     this._interactionHandlers = Object.create(null);
-    this._mouseDown = false;
+    this._pointerDown = false;
 
-    this._interactionHandlers.mousePress = this._handlePress.bind(this);
-    this._interactionHandlers.mouseRelease = this._handleRelease.bind(this);
-    this._interactionHandlers.mouseLeave = this._handleLeave.bind(this);
+    this._interactionHandlers.press = this._handlePress.bind(this);
+    this._interactionHandlers.release = this._handleRelease.bind(this);
+    this._interactionHandlers.leave = this._handleLeave.bind(this);
 
-    this._$element.bind('mousedown', this._interactionHandlers.mousePress);
-    this._$element.bind('mouseup', this._interactionHandlers.mouseRelease);
-    this._$element.bind('mouseleave', this._interactionHandlers.mouseLeave);
+    this._$element.bind('mousedown', this._interactionHandlers.press);
+    this._$element.bind('mouseup', this._interactionHandlers.release);
+    this._$element.bind('mouseleave', this._interactionHandlers.leave);
+
+    if ('ontouchstart' in document) {
+      this._$element.bind('touchstart', this._interactionHandlers.press);
+      this._$element.bind('touchend', this._interactionHandlers.release);
+      this._$element.bind('touchleave', this._interactionHandlers.leave);
+    }
 
     this._$element.data(_DATA_FIELD_KEY, this);
 
@@ -61,9 +69,15 @@ define(
 
   // destroy removes all callback handlers from the element
   Button.prototype.destroy = function () {
-    this._$element.unbind('mousedown', this._interactionHandlers.mousePress);
-    this._$element.unbind('mouseup', this._interactionHandlers.mouseRelease);
-    this._$element.unbind('mouseleave', this._interactionHandlers.mouseLeave);
+    this._$element.unbind('mousedown', this._interactionHandlers.press);
+    this._$element.unbind('mouseup', this._interactionHandlers.release);
+    this._$element.unbind('mouseleave', this._interactionHandlers.leave);
+
+    if ('ontouchstart' in document) {
+      this._$element.unbind('touchstart', this._interactionHandlers.press);
+      this._$element.unbind('touchend', this._interactionHandlers.release);
+      this._$element.unbind('touchleave', this._interactionHandlers.leave);
+    }
 
     this._$element.data(_DATA_FIELD_KEY, null);
   };
@@ -95,7 +109,7 @@ define(
   Button.prototype._handlePress = function () {
     if (this._disabled) return;
     this._$element.addClass('dk-pressed-button');
-    this._mouseDown = true;
+    this._pointerDown = true;
   };
 
 
@@ -112,7 +126,7 @@ define(
 
     this._$element.removeClass('dk-pressed-button');
 
-    this._mouseDown = false;
+    this._pointerDown = false;
     this._callHandlers(this._toggled);
   };
 
@@ -120,10 +134,10 @@ define(
   // _handleLeave mouseleave handler
   Button.prototype._handleLeave = function () {
     if (this._disabled) return;
-    if (this._mouseDown) {
+    if (this._pointerDown) {
       this._$element.removeClass('dk-pressed-button');
     }
-    this._mouseDown = false;
+    this._pointerDown = false;
   };
 
 
