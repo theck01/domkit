@@ -18,6 +18,11 @@
 
 
 .dk-flat-button {
+  // Prevent highlight on touch in iOS
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  // Prevent selecting buttons in iOS
+  -webkit-user-select: none;
+
   border: none;
   background: none;
   background-color: @flat-button-no-background;
@@ -30,6 +35,11 @@
 
 
 .dk-button {
+  // Prevent highlight on touch in iOS
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  // Prevent selecting buttons in iOS
+  -webkit-user-select: none;
+
   border-radius: @domkit-border-radius;
   border: @domkit-border-width solid @domkit-border-color;
   background: @button-noclick-gradient;
