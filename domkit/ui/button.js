@@ -83,6 +83,15 @@ define(
   };
 
 
+  // destroys functionallity of the button's TouchClickCanceller, preventing
+  // responsive events on touch but enabling default click behavior. This
+  // functionallity might be desired for download links or other elements that
+  // MUST be triggered by a real click, not a fake click.
+  Button.prototype.destroyTouchClickCanceller = function () {
+    this._canceller.destroy();
+  };
+
+
   // disable button, preventing all events from triggering and updating button
   // styling.
   Button.prototype.disable = function () {

@@ -56,11 +56,14 @@ define(['domkit/util/expirationqueue'], function (ExpirationQueue) {
 
   // _clickHandler stops event propagation and prevents the default if the
   // event location corresponds to a recent touch.
-  TouchClickCanceller.prototype._clickHandler = function (e) {
+  // Extra arguments:
+  //     opt_allowClick: optional, whether to prevent the click from being
+  //         blocked.
+  TouchClickCanceller.prototype._clickHandler = function (e, opt_allowClick) {
     var loc = { x: e.clientX, y: e.clientY };
 
     // Only add the touch location if it does not already exist in the queue.
-    if (globalExpirationQueue.hasElement(
+    if (!opt_allowClick && globalExpirationQueue.hasElement(
         loc, TouchClickCanceller._compareLocations)) {
       e.stopImmediatePropagation();
       e.stopPropagation();
