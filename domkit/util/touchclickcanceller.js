@@ -7,6 +7,10 @@ define(['domkit/util/expirationqueue'], function (ExpirationQueue) {
   _LOCATION_DIFF = 20;
 
 
+  // Make the expiration queue global, ensuring that a touch on one element
+  // will not cause a click on another element.
+  var globalExpirationQueue = new ExpirationQueue(_CLICK_DELAY_TIME);
+
   // TouchClickCanceller prevents 'click' events from propagating after touch
   // events.
   // Arguments:
@@ -16,7 +20,6 @@ define(['domkit/util/expirationqueue'], function (ExpirationQueue) {
     if (!('ontouchstart' in document)) return;
 
     this._$element = $element;
-    this._expirationQueue = new ExpirationQueue(_CLICK_DELAY_TIME); 
 
     this._handlers = {};
     this._handlers.touch = this._touchStartHandler.bind(this);
@@ -42,11 +45,11 @@ define(['domkit/util/expirationqueue'], function (ExpirationQueue) {
   TouchClickCanceller.prototype._touchStartHandler = function (e) {
     for (var i = 0; i < e.originalEvent.touches.length; i++) {
       var loc = {
-        x: e.originalEvent.touches[i].pageX,
-        y: e.originalEvent.touches[i].pageY
+        x: e.originalEvent.touches[i].clientX,
+        y: e.originalEvent.touches[i].clientY
       };
 
-      this._expirationQueue.add(loc);
+      globalExpirationQueue.add(loc);
     }
   };
 
@@ -54,10 +57,10 @@ define(['domkit/util/expirationqueue'], function (ExpirationQueue) {
   // _clickHandler stops event propagation and prevents the default if the
   // event location corresponds to a recent touch.
   TouchClickCanceller.prototype._clickHandler = function (e) {
-    var loc = { x: e.pageX, y: e.pageY };
+    var loc = { x: e.clientX, y: e.clientY };
 
     // Only add the touch location if it does not already exist in the queue.
-    if (this._expirationQueue.hasElement(
+    if (globalExpirationQueue.hasElement(
         loc, TouchClickCanceller._compareLocations)) {
       e.stopImmediatePropagation();
       e.stopPropagation();
