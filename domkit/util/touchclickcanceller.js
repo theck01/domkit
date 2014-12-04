@@ -29,14 +29,6 @@ define(['domkit/util/expirationqueue'], function (ExpirationQueue) {
   };
 
 
-  // Compare locations to determine if they are equivalent, with an error
-  // margin to handle stubtle shifts in position due to finger movements.
-  _TouchClickCanceller._compareLocations = function (a, b) {
-    return Math.abs(a.x - b.x) < _LOCATION_DIFF &&
-        Math.abs(a.y - b.y) < _LOCATION_DIFF;
-  };
-
-
   // _touchStartHandler queues the touch location to the expiration queue to
   // prevent processing click events in that area due to the touch.
   _TouchClickCanceller.prototype._touchStartHandler = function (e) {
@@ -61,7 +53,7 @@ define(['domkit/util/expirationqueue'], function (ExpirationQueue) {
 
     // Only add the touch location if it does not already exist in the queue.
     if (!opt_allowClick && globalExpirationQueue.hasElement(
-        loc, _TouchClickCanceller._compareLocations)) {
+        loc, TouchClickCanceller.compareLocations)) {
       e.stopImmediatePropagation();
       e.stopPropagation();
       e.preventDefault();
@@ -81,6 +73,14 @@ define(['domkit/util/expirationqueue'], function (ExpirationQueue) {
   // Eternal class with static constructor that creates _TouchClickCancellers
   // only if touch events are enabled on the device.
   var TouchClickCanceller = Object.create(null);
+
+
+  // Compare locations to determine if they are equivalent, with an error
+  // margin to handle stubtle shifts in position due to finger movements.
+  TouchClickCanceller.compareLocations = function (a, b) {
+    return Math.abs(a.x - b.x) < _LOCATION_DIFF &&
+        Math.abs(a.y - b.y) < _LOCATION_DIFF;
+  };
 
   
   // create returns an instance of the canceller if touch events are enabled,

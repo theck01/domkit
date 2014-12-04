@@ -33,8 +33,10 @@ define(
     this._$element.bind('mouseleave', this._interactionHandlers.leave);
 
     if ('ontouchstart' in document) {
-      this._$element.bind('touchstart', this._interactionHandlers.press);
-      this._$element.bind('touchend', this._interactionHandlers.release);
+      this._interactionHandlers.touchstart = this._handleTouchStart.bind(this);
+      this._interactionHandlers.touchend = this._handleTouchEnd.bind(this);
+      this._$element.bind('touchstart', this._interactionHandlers.touchstart);
+      this._$element.bind('touchend', this._interactionHandlers.touchend);
       this._$element.bind('touchleave', this._interactionHandlers.leave);
     }
 
@@ -74,8 +76,8 @@ define(
     this._$element.unbind('mouseleave', this._interactionHandlers.leave);
 
     if ('ontouchstart' in document) {
-      this._$element.unbind('touchstart', this._interactionHandlers.press);
-      this._$element.unbind('touchend', this._interactionHandlers.release);
+      this._$element.unbind('touchstart', this._interactionHandlers.touchstart);
+      this._$element.unbind('touchend', this._interactionHandlers.touchend);
       this._$element.unbind('touchleave', this._interactionHandlers.leave);
     }
 
@@ -118,7 +120,7 @@ define(
   };
 
 
-  // _handlePress mousedown handler
+  // _handlePress handles touchstart and mousedown
   Button.prototype._handlePress = function () {
     if (this._disabled) return;
     this._$element.addClass('dk-pressed-button');
@@ -126,7 +128,17 @@ define(
   };
 
 
-  // _handleRelease mouseup handler
+  // _handleTouchStart stores touch location and defers to _handlePress
+  Button.prototype._handleTouchStart = function (e) {
+    this._touchScreenCoordinate = {
+      x: e.originalEvent.touches[0].clientX,
+      y: e.originalEvent.touches[0].clientY
+    };
+    this._handlePress();
+  };
+
+
+  // _handleRelease handles touchend and mouseup
   Button.prototype._handleRelease = function () {
     if (this._disabled) return;
 
@@ -144,12 +156,31 @@ define(
   };
 
 
-  // _handleLeave mouseleave handler
+  // _handleTouchEnd delegates to _handleRelease if touchend is in equivalent
+  // location to touchstart.
+  Button.prototype._handleTouchEnd = function (e) {
+    touchEndScreenCoordinate = {
+      x: e.originalEvent.changedTouches[0].clientX,
+      y: e.originalEvent.changedTouches[0].clientY
+    };
+
+    // Only handle release if the touch ended near where it started.
+    if (TouchClickCanceller.compareLocations(
+        this._touchScreenCoordinate, touchEndScreenCoordinate)) {
+      this._handleRelease();
+    }
+    
+    this._touchScreenCoordinate = null;
+  };
+
+
+  // _handleLeave mouseleave handles touchleave and mouseleave
   Button.prototype._handleLeave = function () {
     if (this._disabled) return;
     if (this._pointerDown) {
       this._$element.removeClass('dk-pressed-button');
     }
+    if (this._touchScreenCoordinate) this._touchScreenCoordinate = null;
     this._pointerDown = false;
   };
 
