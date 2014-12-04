@@ -50,8 +50,6 @@ define([], function () {
       if (this._queue[i].timestamp + this._expirationTime > now) break;
       this._queue.shift();
     }
-
-    console.log(i + ' elements removed.');
   };
 
 
