@@ -93,5 +93,12 @@ define(['domkit/util/expirationqueue'], function (ExpirationQueue) {
   };
 
 
+  // forceClick on element bypasses click prevention due to touch events with a
+  // simulated click.
+  TouchClickCanceller.forceClick = function ($element) {
+    $element.trigger('click', [true]);
+  };
+
+
   return TouchClickCanceller;
 });
