@@ -13,7 +13,7 @@ define(
     HandlerCollection.call(this);
 
     this._$element = Domkit.validateOrRetrieveJQueryObject(jQueryOrDomID);
-    this._canceller = new TouchClickCanceller(this._$element);
+    this._canceller = TouchClickCanceller.create(this._$element);
     this._disabled = false;
     this._isFlat = this._$element.hasClass('dk-flat-button') ||
         this._$element.hasClass('dk-flat-toggleable-button');
@@ -80,6 +80,7 @@ define(
     }
 
     this._$element.data(_DATA_FIELD_KEY, null);
+    this._destroyTouchClickCanceller();
   };
 
 
@@ -88,7 +89,10 @@ define(
   // functionallity might be desired for download links or other elements that
   // MUST be triggered by a real click, not a fake click.
   Button.prototype.destroyTouchClickCanceller = function () {
-    this._canceller.destroy();
+    if (this._canceller) {
+      this._canceller.destroy();
+      this._canceller = null;
+    }
   };
 
 

@@ -11,14 +11,11 @@ define(['domkit/util/expirationqueue'], function (ExpirationQueue) {
   // will not cause a click on another element.
   var globalExpirationQueue = new ExpirationQueue(_CLICK_DELAY_TIME);
 
-  // TouchClickCanceller prevents 'click' events from propagating after touch
+  // _TouchClickCanceller prevents 'click' events from propagating after touch
   // events.
   // Arguments:
   //     $element: jQuery object to prevent delayed click events on.
-  TouchClickCanceller = function ($element) {
-    // If touch events are not enabled then do nothing.
-    if (!('ontouchstart' in document)) return;
-
+  var _TouchClickCanceller = function ($element) {
     this._$element = $element;
 
     this._handlers = {};
@@ -34,7 +31,7 @@ define(['domkit/util/expirationqueue'], function (ExpirationQueue) {
 
   // Compare locations to determine if they are equivalent, with an error
   // margin to handle stubtle shifts in position due to finger movements.
-  TouchClickCanceller._compareLocations = function (a, b) {
+  _TouchClickCanceller._compareLocations = function (a, b) {
     return Math.abs(a.x - b.x) < _LOCATION_DIFF &&
         Math.abs(a.y - b.y) < _LOCATION_DIFF;
   };
@@ -42,7 +39,7 @@ define(['domkit/util/expirationqueue'], function (ExpirationQueue) {
 
   // _touchStartHandler queues the touch location to the expiration queue to
   // prevent processing click events in that area due to the touch.
-  TouchClickCanceller.prototype._touchStartHandler = function (e) {
+  _TouchClickCanceller.prototype._touchStartHandler = function (e) {
     for (var i = 0; i < e.originalEvent.touches.length; i++) {
       var loc = {
         x: e.originalEvent.touches[i].clientX,
@@ -59,12 +56,12 @@ define(['domkit/util/expirationqueue'], function (ExpirationQueue) {
   // Extra arguments:
   //     opt_allowClick: optional, whether to prevent the click from being
   //         blocked.
-  TouchClickCanceller.prototype._clickHandler = function (e, opt_allowClick) {
+  _TouchClickCanceller.prototype._clickHandler = function (e, opt_allowClick) {
     var loc = { x: e.clientX, y: e.clientY };
 
     // Only add the touch location if it does not already exist in the queue.
     if (!opt_allowClick && globalExpirationQueue.hasElement(
-        loc, TouchClickCanceller._compareLocations)) {
+        loc, _TouchClickCanceller._compareLocations)) {
       e.stopImmediatePropagation();
       e.stopPropagation();
       e.preventDefault();
@@ -73,11 +70,26 @@ define(['domkit/util/expirationqueue'], function (ExpirationQueue) {
 
 
   // destory removes event handlers from the element.
-  TouchClickCanceller.prototype.destroy = function () {
+  _TouchClickCanceller.prototype.destroy = function () {
     this._$element.off('touchstart', this._handlers.touch);
     this._$element.off('click', this._handlers.click);
     this._$element.off('mousedown', this._handlers.click);
     this._$element.off('mouseup', this._handlers.click);
+  };
+
+
+  // Eternal class with static constructor that creates _TouchClickCancellers
+  // only if touch events are enabled on the device.
+  var TouchClickCanceller = Object.create(null);
+
+  
+  // create returns an instance of the canceller if touch events are enabled,
+  // or null if not.
+  // Arguments:
+  //     $element: jQuery object to prevent delayed click events on.
+  TouchClickCanceller.create = function ($element) {
+    if ('ontouchstart' in window) return new _TouchClickCanceller($element);
+    return null;
   };
 
 
