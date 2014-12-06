@@ -163,8 +163,7 @@ define(
     if (TouchClickCanceller.compareLocations(
         this._touchScreenCoordinate, touchEndScreenCoordinate)) {
       this._handleRelease();
-    }
-    
+    } else this._handleLeave();
     this._touchScreenCoordinate = null;
   };
 
@@ -175,7 +174,6 @@ define(
     if (this._pointerDown) {
       this._$element.removeClass('dk-pressed-button');
     }
-    if (this._touchScreenCoordinate) this._touchScreenCoordinate = null;
     this._pointerDown = false;
   };
 
