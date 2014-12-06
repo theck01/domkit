@@ -9,11 +9,14 @@ define(
   // Button extends the HTML button element, giving default behaviors.
   // Arguments:
   //   jQueryOrDomID: A CSS style id selector or jQuery object.
-  var Button = function (jQueryOrDomID) {
+  //   opt_createClickCancel: optional, prevents active click cancelling on
+  //       touch events.
+  var Button = function (jQueryOrDomID, opt_preventClickCancel) {
     HandlerCollection.call(this);
 
     this._$element = Domkit.validateOrRetrieveJQueryObject(jQueryOrDomID);
-    this._canceller = TouchClickCanceller.create(this._$element);
+    this._canceller = !opt_preventClickCancel ?
+        TouchClickCanceller.create(this._$element) : null;
     this._disabled = false;
     this._isFlat = this._$element.hasClass('dk-flat-button') ||
         this._$element.hasClass('dk-flat-toggleable-button');
@@ -81,20 +84,12 @@ define(
       this._$element.unbind('touchleave', this._interactionHandlers.leave);
     }
 
-    this._$element.data(_DATA_FIELD_KEY, null);
-    this._destroyTouchClickCanceller();
-  };
-
-
-  // destroys functionallity of the button's TouchClickCanceller, preventing
-  // responsive events on touch but enabling default click behavior. This
-  // functionallity might be desired for download links or other elements that
-  // MUST be triggered by a real click, not a fake click.
-  Button.prototype.destroyTouchClickCanceller = function () {
     if (this._canceller) {
       this._canceller.destroy();
       this._canceller = null;
     }
+
+    this._$element.data(_DATA_FIELD_KEY, null);
   };
 
 
@@ -227,10 +222,13 @@ define(
   // is returned.
   // Arguments:
   //   jQueryOrDomID: A CSS style id selector or jQuery object.
-  Button.create = function (jQueryOrDomID) {
+  //   opt_createClickCancel: optional, prevents active click cancelling on
+  //       touch events.
+  Button.create = function (jQueryOrDomID, opt_preventClickCancel) {
     var $element = Domkit.validateOrRetrieveJQueryObject(jQueryOrDomID);
     var buttonInstance = $element.data(_DATA_FIELD_KEY);
-    return buttonInstance ? buttonInstance : new Button($element);
+    return buttonInstance ?
+      buttonInstance : new Button($element, opt_preventClickCancel);
   };
 
 
