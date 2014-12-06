@@ -378,12 +378,13 @@ define(
   // palette offsets.
   Palette.prototype._shiftDOM = function () {
     this._domCache.palette.removeClass('dk-palette-appear-transition');
-    this._domCache.palette.css({
-      'top': this._paletteOffset.y,
-      'left': this._paletteOffset.x,
-    });
 
     if (this._isVisible) {
+      this._domCache.palette.css({
+        'top': this._paletteOffset.y,
+        'left': this._paletteOffset.x,
+      });
+
       this._domCache.paletteAnchor.removeClass('dk-palette-appear-transition');
       this._domCache.paletteAnchor.css({
         'top': this._anchorOffset.y - this._paletteOffset.y,
@@ -395,6 +396,12 @@ define(
       this._domCache.paletteAnchorBorder.css({
         'top': this._anchorBorderOffset.y - this._paletteOffset.y,
         'left': this._anchorBorderOffset.x - this._paletteOffset.x,
+      });
+    }
+    else {
+      this._domCache.palette.css({
+        'top': this._anchorOffset.y,
+        'left': this._anchorOffset.x,
       });
     }
   };
