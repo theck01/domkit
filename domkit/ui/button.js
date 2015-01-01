@@ -1,7 +1,7 @@
 define(
     ['jquery', 'domkit/domkit', 'domkit/util/handlercollection',
-     'domkit/ui/base'],
-    function ($, Domkit, HandlerCollection, Base) {
+     'domkit/util/touchclickcanceller', 'domkit/ui/base'],
+    function ($, Domkit, HandlerCollection, TouchClickCanceller, Base) {
 
   var _DATA_FIELD_KEY = '_data_dk_button_object';
 
