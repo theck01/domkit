@@ -27,7 +27,7 @@ define(
 
 
   // destroy the domkit ui element.
-  Base.prototype.destory = function () {
+  Base.prototype.destroy = function () {
     if (this._canceller) {
       this._canceller.destroy();
       this._canceller = null;
