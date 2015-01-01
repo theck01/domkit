@@ -8,11 +8,12 @@ require.config({
 
 require(
     ['jquery', 'domkit/controllers/radiogroup', 'domkit/ui/palette',
-    'domkit/ui/button', 'domkit/ui/tooltip'],
-    function($, RadioGroup, Palette, Button, Tooltip) {
+    'domkit/ui/button', 'domkit/ui/tooltip', 'domkit/ui/textinput'],
+    function($, RadioGroup, Palette, Button, Tooltip, TextInput) {
   $(function () {
     Button.createAll();
     Tooltip.createAll(1000);
+    TextInput.createAll();
 
     var regularButton = Button.create('#test-button');
     regularButton.disable();
