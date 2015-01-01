@@ -6,11 +6,11 @@ define([], function () {
   };
 
 
-  // _addHandler to the collection.
+  // addHandler to the collection.
   //
   // Argument:
   //   handler: A function that takes an arbitrary set of arguments.
-  HandlerCollection.prototype._addHandler = function (handler) {
+  HandlerCollection.prototype.addHandler = function (handler) {
     for (var i = 0; i < this._handlers.length; i++) {
       if (this._handlers[i] === handler) return; 
     }
@@ -24,7 +24,7 @@ define([], function () {
   // 
   // Arguments:
   //   Any set of arguments that the handler functions expect to recieve.
-  HandlerCollection.prototype._callHandlers = function () {
+  HandlerCollection.prototype.callHandlers = function () {
     var args = Array.prototype.slice.call(arguments);
     for (var i = 0; i < this._handlers.length; i++) {
       this._handlers[i].apply(null, args);
@@ -36,7 +36,7 @@ define([], function () {
   //
   // Arguments:
   //   handler: The function to remove from the set of handlers.
-  HandlerCollection.prototype._removeHandler = function (handler) {
+  HandlerCollection.prototype.removeHandler = function (handler) {
     for (var i = this._handlers.length - 1; i >= 0; i--) {
       if (this._handlers[i] === handler) {
         this._handlers.splice(i, 1);

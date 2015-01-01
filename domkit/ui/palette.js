@@ -47,11 +47,11 @@ define(
 
     var callDelayedHandlers = function (isVisible) {
       setTimeout(
-          this._delayedVisibleStateHandlers._callHandlers.bind(
+          this._delayedVisibleStateHandlers.callHandlers.bind(
               this._delayedVisibleStateHandlers, isVisible),
           _PALETTE_TRANSITION_DURATION);
     };
-    this._visibleStateHandlers._addHandler(callDelayedHandlers.bind(this));
+    this._visibleStateHandlers.addHandler(callDelayedHandlers.bind(this));
 
     this._anchorPosition = this._calculateAnchorPosition();
     this._$menu = Domkit.validateOrRetrieveJQueryObject(params.menu);
@@ -131,7 +131,7 @@ define(
   //   handler: Function that takes a boolean argument, whether the palette is
   //       visible.
   Palette.prototype.addVisibleStateHandler = function (handler) {
-    this._visibleStateHandlers._addHandler(handler); 
+    this._visibleStateHandlers.addHandler(handler); 
   };
 
 
@@ -143,7 +143,7 @@ define(
   //   handler: Function that takes a boolean argument, whether the palette is
   //       visible.
   Palette.prototype.addDelayedVisibleStateHandler = function (handler) {
-    this._delayedVisibleStateHandlers._addHandler(handler); 
+    this._delayedVisibleStateHandlers.addHandler(handler); 
   };
 
 
@@ -359,7 +359,7 @@ define(
   //   handler: Function that takes a boolean argument, whether the palette is
   //       visible.
   Palette.prototype.removeVisibleStateHandler = function (handler) {
-    this._visibleStateHandlers._removeHandler(handler); 
+    this._visibleStateHandlers.removeHandler(handler); 
   };
 
   // removeDelayedVisibleStateHandler removes a function should no longer
@@ -370,7 +370,7 @@ define(
   //   handler: Function that takes a boolean argument, whether the palette is
   //       visible.
   Palette.prototype.removeDelayedVisibleStateHandler = function (handler) {
-    this._delayedVisibleStateHandlers._addHandler(handler); 
+    this._delayedVisibleStateHandlers.removeHandler(handler); 
   };
 
 
@@ -613,7 +613,7 @@ define(
       this._hideDOM();
       this._isVisible = false;
     }
-    this._visibleStateHandlers._callHandlers(isVisible);
+    this._visibleStateHandlers.callHandlers(isVisible);
   };
 
 

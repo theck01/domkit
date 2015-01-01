@@ -1,7 +1,7 @@
 define(
     ['jquery', 'domkit/domkit', 'domkit/util/handlercollection',
-     'domkit/util/touchclickcanceller'],
-    function ($, Domkit, HandlerCollection, TouchClickCanceller) {
+     'domkit/ui/base'],
+    function ($, Domkit, HandlerCollection, Base) {
 
   var _DATA_FIELD_KEY = '_data_dk_button_object';
 
@@ -12,18 +12,17 @@ define(
   //   opt_createClickCancel: optional, prevents active click cancelling on
   //       touch events.
   var Button = function (jQueryOrDomID, opt_preventClickCancel) {
-    HandlerCollection.call(this);
+    Base.call(this, jQueryOrDomID, opt_preventClickCancel);
+    var $element = this.getElement();
 
-    this._$element = Domkit.validateOrRetrieveJQueryObject(jQueryOrDomID);
-    this._canceller = !opt_preventClickCancel ?
-        TouchClickCanceller.create(this._$element) : null;
     this._disabled = false;
-    this._isFlat = this._$element.hasClass('dk-flat-button') ||
-        this._$element.hasClass('dk-flat-toggleable-button');
-    this._toggleable = this._$element.hasClass('dk-toggleable-button') ||
-        this._$element.hasClass('dk-flat-toggleable-button');
+    this._handlerCollection = new HandlerCollection();
+    this._isFlat = $element.hasClass('dk-flat-button') ||
+        $element.hasClass('dk-flat-toggleable-button');
+    this._toggleable = $element.hasClass('dk-toggleable-button') ||
+        $element.hasClass('dk-flat-toggleable-button');
     this._toggled = this._toggleable &&
-        this._$element.hasClass('dk-active-button');
+        $element.hasClass('dk-active-button');
     this._interactionHandlers = Object.create(null);
     this._pointerDown = false;
 
@@ -31,25 +30,25 @@ define(
     this._interactionHandlers.release = this._handleRelease.bind(this);
     this._interactionHandlers.leave = this._handleLeave.bind(this);
 
-    this._$element.bind('mousedown', this._interactionHandlers.press);
-    this._$element.bind('mouseup', this._interactionHandlers.release);
-    this._$element.bind('mouseleave', this._interactionHandlers.leave);
+    $element.bind('mousedown', this._interactionHandlers.press);
+    $element.bind('mouseup', this._interactionHandlers.release);
+    $element.bind('mouseleave', this._interactionHandlers.leave);
 
-    if ('ontouchstart' in document) {
+    if (this.cancelsTouchGeneratedClicks()) {
       this._interactionHandlers.touchstart = this._handleTouchStart.bind(this);
       this._interactionHandlers.touchend = this._handleTouchEnd.bind(this);
-      this._$element.bind('touchstart', this._interactionHandlers.touchstart);
-      this._$element.bind('touchend', this._interactionHandlers.touchend);
-      this._$element.bind('touchleave', this._interactionHandlers.leave);
+      $element.bind('touchstart', this._interactionHandlers.touchstart);
+      $element.bind('touchend', this._interactionHandlers.touchend);
+      $element.bind('touchleave', this._interactionHandlers.leave);
     }
 
-    this._$element.data(_DATA_FIELD_KEY, this);
+    $element.data(_DATA_FIELD_KEY, this);
 
     if (!this._isDKButton()) {
-      this._$element.addClass('dk-button');
+      $element.addClass('dk-button');
     }
   };
-  Button.prototype = Object.create(HandlerCollection.prototype);
+  Button.prototype = Object.create(Base.prototype);
   Button.prototype.constructor = Button;
 
 
@@ -58,7 +57,9 @@ define(
   // Arguments:
   //   handler: Function that takes a boolean argument, whether the button is
   //       active (toggled) or not.
-  Button.prototype.addClickHandler = Button.prototype._addHandler;
+  Button.prototype.addClickHandler = function (handler) {
+    this._handlerCollection.addHandler(handler);
+  };
 
 
   // addStateHandler is an alias for addClickHandler
@@ -74,29 +75,27 @@ define(
 
   // destroy removes all callback handlers from the element
   Button.prototype.destroy = function () {
-    this._$element.unbind('mousedown', this._interactionHandlers.press);
-    this._$element.unbind('mouseup', this._interactionHandlers.release);
-    this._$element.unbind('mouseleave', this._interactionHandlers.leave);
+    var $element = this.getElement();
+
+    $element.unbind('mousedown', this._interactionHandlers.press);
+    $element.unbind('mouseup', this._interactionHandlers.release);
+    $element.unbind('mouseleave', this._interactionHandlers.leave);
 
     if ('ontouchstart' in document) {
-      this._$element.unbind('touchstart', this._interactionHandlers.touchstart);
-      this._$element.unbind('touchend', this._interactionHandlers.touchend);
-      this._$element.unbind('touchleave', this._interactionHandlers.leave);
+      $element.unbind('touchstart', this._interactionHandlers.touchstart);
+      $element.unbind('touchend', this._interactionHandlers.touchend);
+      $element.unbind('touchleave', this._interactionHandlers.leave);
     }
-
-    if (this._canceller) {
-      this._canceller.destroy();
-      this._canceller = null;
-    }
-
-    this._$element.data(_DATA_FIELD_KEY, null);
+    
+    Base.prototype.destroy.call(this);
   };
 
 
   // disable button, preventing all events from triggering and updating button
   // styling.
   Button.prototype.disable = function () {
-    this._$element.addClass('dk-disabled');
+    var $element = this.getElement();
+    $element.addClass('dk-disabled');
     this._disabled = true;
   };
 
@@ -104,7 +103,8 @@ define(
   // enable button, resuming processing all events and updating button
   // styling.
   Button.prototype.enable = function () {
-    this._$element.removeClass('dk-disabled');
+    var $element = this.getElement();
+    $element.removeClass('dk-disabled');
     this._disabled = false;
   };
 
@@ -118,7 +118,8 @@ define(
   // _handlePress handles touchstart and mousedown
   Button.prototype._handlePress = function () {
     if (this._disabled) return;
-    this._$element.addClass('dk-pressed-button');
+    var $element = this.getElement();
+    $element.addClass('dk-pressed-button');
     this._pointerDown = true;
   };
 
@@ -137,17 +138,18 @@ define(
   Button.prototype._handleRelease = function () {
     if (this._disabled) return;
 
+    var $element = this.getElement();
+
     if (this._toggleable) {
       this._toggled = !this._toggled;
-
-      if (this._toggled) this._$element.addClass('dk-active-button');
-      else this._$element.removeClass('dk-active-button');
+      if (this._toggled) $element.addClass('dk-active-button');
+      else $element.removeClass('dk-active-button');
     }
 
-    this._$element.removeClass('dk-pressed-button');
+    $element.removeClass('dk-pressed-button');
 
     this._pointerDown = false;
-    this._callHandlers(this._toggled);
+    this._handlerCollection.callHandlers(this._toggled);
   };
 
 
@@ -172,7 +174,8 @@ define(
   Button.prototype._handleLeave = function () {
     if (this._disabled) return;
     if (this._pointerDown) {
-      this._$element.removeClass('dk-pressed-button');
+      var $element = this.getElement();
+      $element.removeClass('dk-pressed-button');
     }
     this._pointerDown = false;
   };
@@ -181,10 +184,11 @@ define(
   // _isDKButton verifies that the element the Button instance is bound to
   // has a dk-button or related CSS class.
   Button.prototype._isDKButton = function () {
-    return this._$element.hasClass('dk-button') ||
-      this._$element.hasClass('dk-flat-button') ||
-      this._$element.hasClass('dk-toggleable-button') ||
-      this._$element.hasClass('dk-flat-toggleable-button');
+    var $element = this.getElement();
+    return $element.hasClass('dk-button') ||
+      $element.hasClass('dk-flat-button') ||
+      $element.hasClass('dk-toggleable-button') ||
+      $element.hasClass('dk-flat-toggleable-button');
   };
 
 
@@ -200,7 +204,9 @@ define(
   // Arguments:
   //   handler: Function that takes a boolean argument, whether the button is
   //       active (toggled) or not.
-  Button.prototype.removeClickHandler = Button.prototype._removeHandler;
+  Button.prototype.removeClickHandler = function (handler) {
+    this._handlerCollection.removeHandler(handler);
+  };
 
 
   // removeStateHandler is an alias for removeClickHandler
@@ -223,10 +229,7 @@ define(
   //   opt_createClickCancel: optional, prevents active click cancelling on
   //       touch events.
   Button.create = function (jQueryOrDomID, opt_preventClickCancel) {
-    var $element = Domkit.validateOrRetrieveJQueryObject(jQueryOrDomID);
-    var buttonInstance = $element.data(_DATA_FIELD_KEY);
-    return buttonInstance ?
-      buttonInstance : new Button($element, opt_preventClickCancel);
+    return Base.create(Button, jQueryOrDomID, opt_preventClickCancel);
   };
 
 
