@@ -233,6 +233,12 @@ define(
   // _hideDOM collapses palette to the anchor origin point, hiding the contents
   // from view
   Palette.prototype._hideDOM = function () {
+    // Remove focus from the active element if the element is found within the
+    // palette.
+    if ($.contains(this._domCache.palette[0], document.activeElement)) {
+      $(document.activeElement).blur();
+    }
+
     // Ensure that the positions of the DOM are as up to date as possible.
     this._anchorPosition = this._calculateAnchorPosition();
     this._updateAnchorOffsets();
